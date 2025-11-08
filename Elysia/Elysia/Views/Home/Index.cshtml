@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Elysia.Models.Course>
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Chào mừng đến với Elysia</h1>
+    <p>Nền tảng học trực tuyến hàng đầu.</p>
+</div>
+
+<hr />
+
+<h3>Các khóa học nổi bật</h3>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default-course.png" : item.ImageUrl)"
+                     class="card-img-top"
+                     alt="@item.Title"
+                     style="height: 200px; object-fit: cover;">
+
+                <div class="card-body">
+                    <h5 class="card-title">@item.Title</h5>
+                    <p class="card-text text-muted">
+                        Giảng viên: @(item.User?.FullName ?? "N/A")
+                    </p>
+                    <p class="card-text">
+                        @item.Description.Substring(0, Math.Min(item.Description.Length, 100))...
+                    </p>
+                    <h4 class="card-text text-danger">
+                        @(item.Price == 0 ? "Miễn phí" : $"{item.Price:C0}")
+                    </h4>
+                    <a href="#" class="btn btn-primary">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
