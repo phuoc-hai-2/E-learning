@@ -69,6 +69,7 @@ namespace Elysia.Controllers
 
         // POST: /Admin/ApproveCourse
         // Xử lý duyệt 1 khóa học
+        [HttpGet]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveCourse(int courseId)
