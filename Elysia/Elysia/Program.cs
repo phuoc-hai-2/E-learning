@@ -59,6 +59,24 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+try
+{
+    // Tạo một "scope" để lấy dịch vụ
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+
+        // Gọi hàm SeedRolesAndAdminAsync
+        // Dùng .Wait() vì chúng ta đang ở trong hàm Main (đồng bộ)
+        Elysia.Data.DbSeeder.SeedRolesAndAdminAsync(services).Wait();
+    }
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "Một lỗi đã xảy ra khi seed CSDL.");
+}
+
 // 8. Map các Route
 // Route mặc định cho MVC (Controllers)
 app.MapControllerRoute(

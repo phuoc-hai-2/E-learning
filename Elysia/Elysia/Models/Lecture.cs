@@ -25,5 +25,6 @@ namespace Elysia.Models
         // Thuộc tính Navigation đến Khóa học
         [ForeignKey("CourseID")]
         public virtual Course Course { get; set; }
+        public virtual Quiz Quiz { get; set; }
     }
 }

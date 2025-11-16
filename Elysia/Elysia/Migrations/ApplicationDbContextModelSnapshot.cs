@@ -355,7 +355,8 @@ namespace Elysia.Migrations
 
                     b.HasKey("QuizID");
 
-                    b.HasIndex("LectureID");
+                    b.HasIndex("LectureID")
+                        .IsUnique();
 
                     b.ToTable("Quizzes");
                 });
@@ -642,8 +643,8 @@ namespace Elysia.Migrations
             modelBuilder.Entity("Elysia.Models.Quiz", b =>
                 {
                     b.HasOne("Elysia.Models.Lecture", "Lecture")
-                        .WithMany()
-                        .HasForeignKey("LectureID")
+                        .WithOne("Quiz")
+                        .HasForeignKey("Elysia.Models.Quiz", "LectureID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -736,6 +737,12 @@ namespace Elysia.Migrations
                     b.Navigation("Lectures");
 
                     b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("Elysia.Models.Lecture", b =>
+                {
+                    b.Navigation("Quiz")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Elysia.Models.Question", b =>

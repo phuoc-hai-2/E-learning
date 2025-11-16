@@ -296,3 +296,4 @@ C:\Users\daoph\OneDrive\Tài liệu\GitHub\E-learning\Elysia\Elysia\obj\Debug\
 C:\Users\daoph\OneDrive\Tài liệu\GitHub\E-learning\Elysia\Elysia\obj\Debug\net8.0\Elysia.pdb
 C:\Users\daoph\OneDrive\Tài liệu\GitHub\E-learning\Elysia\Elysia\obj\Debug\net8.0\Elysia.genruntimeconfig.cache
 C:\Users\daoph\OneDrive\Tài liệu\GitHub\E-learning\Elysia\Elysia\obj\Debug\net8.0\ref\Elysia.dll
+C:\Users\daoph\OneDrive\Tài liệu\GitHub\E-learning\Elysia\Elysia\obj\Debug\net8.0\Elysia.sourcelink.json

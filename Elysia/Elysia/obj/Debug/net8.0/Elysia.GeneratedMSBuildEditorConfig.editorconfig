@@ -188,12 +188,72 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Admin/ApproveCourses.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQXBwcm92ZUNvdXJzZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Admin/ApproveInstructors.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQXBwcm92ZUluc3RydWN0b3JzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Admin/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Admin/ManageUsers.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cTWFuYWdlVXNlcnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Courses/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Courses/DoQuiz.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xEb1F1aXouY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Courses/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Courses/QuizResult.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xRdWl6UmVzdWx0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Courses/Search.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xTZWFyY2guY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Courses/Watch.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlc1xXYXRjaC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Instructor/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zdHJ1Y3RvclxDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Instructor/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zdHJ1Y3RvclxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Instructor/ManageCourse.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zdHJ1Y3RvclxNYW5hZ2VDb3Vyc2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Instructor/ManageQuiz.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zdHJ1Y3RvclxNYW5hZ2VRdWl6LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Instructor/MyCourses.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5zdHJ1Y3RvclxNeUNvdXJzZXMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/daoph/OneDrive/Tài liệu/GitHub/E-learning/Elysia/Elysia/Views/Shared/_LoginPartial.cshtml]
