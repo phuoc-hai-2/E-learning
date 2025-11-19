@@ -1,7 +1,58 @@
-﻿
+﻿@model IEnumerable<Elysia.Models.ApplicationUser>
+
 @{
-    ViewData["Title"] = "ManageUsers";
+    ViewData["Title"] = "Quản lý Người dùng";
 }
 
-<h1>ManageUsers</h1>
+<div class="container mt-4">
+    <h2 class="mb-4">👥 Quản lý Người dùng</h2>
+    <p>Tổng số người dùng trong hệ thống: <b>@(Model?.Count() ?? 0)</b></p>
 
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Email / Tên đăng nhập</th>
+                <th>Họ và Tên</th>
+                <th>Đã xác nhận Email</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Email</td>
+                    <td>@(user.FullName ?? "Chưa cập nhật")</td>
+                    <td>
+                        @if (user.EmailConfirmed)
+                        {
+                            <span class="badge bg-success">Đã duyệt</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                        }
+                    </td>
+                    <td>
+                        @if (user.Email != "admin@elysia.com") // Ngăn chặn xóa Admin mặc định
+                        {
+                            <form asp-controller="Admin" asp-action="DeleteUser" method="post" style="display:inline;">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('CẢNH BÁO: Hành động này sẽ XÓA vĩnh viễn người dùng @user.Email. Bạn có chắc không?');">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Tài khoản chính</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

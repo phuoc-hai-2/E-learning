@@ -1,5 +1,46 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Dashboard Giảng viên";
 }
+
+<div class="container mt-4">
+    <h2 class="mb-4">Chào mừng, Giảng viên!</h2>
+    <p class="text-muted">Tổng quan về hoạt động giảng dạy của bạn trên Elysia.</p>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <div class="card bg-info text-white shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Tổng Khóa Học Đã Tạo</h5>
+                    <p class="card-text display-4 fw-bold">@(ViewBag.TotalCourses ?? 0)</p>
+                    <a asp-action="MyCourses" class="text-white small">Xem tất cả khóa học &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Tổng Sinh Viên Đăng Ký</h5>
+                    @* Giả định bạn có ViewBag.TotalEnrollments *@
+                    <p class="card-text display-4 fw-bold">@(ViewBag.TotalEnrollments ?? 0)</p>
+                    <span class="small">Số lượt đăng ký trên tất cả khóa học.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card bg-warning text-dark shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Khóa Học Chờ Duyệt</h5>
+                    @* Giả định bạn có ViewBag.PendingCourses *@
+                    <p class="card-text display-4 fw-bold">@(ViewBag.PendingCourses ?? 0)</p>
+                    <span class="small">Khóa học đang chờ Admin xét duyệt.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-5">Tạo khóa học mới</h3>
+    <a asp-action="Create" class="btn btn-primary btn-lg"><i class="fas fa-plus-circle"></i> Tạo Khóa Học Mới Ngay</a>
+</div>

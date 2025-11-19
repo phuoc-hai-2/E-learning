@@ -1,7 +1,49 @@
-﻿
-@{
-    ViewData["Title"] = "QuizResult";
+﻿@{
+    ViewData["Title"] = "Kết quả Bài kiểm tra";
+    // Giả định ViewBag.Score đã được truyền từ CoursesController (ví dụ: 85)
+    int score = ViewBag.Score ?? 0;
+
+    // Logic xác định trạng thái
+    bool passed = score >= 70; // Giả định điểm đạt là 70
+    string statusClass = passed ? "border-success" : "border-danger";
+    string iconClass = passed ? "bi-award-fill" : "bi-x-octagon-fill";
+    string statusText = passed ? "XIN CHÚC MỪNG! BẠN ĐÃ HOÀN THÀNH" : "CHƯA ĐẠT! VUI LÒNG THỬ LẠI";
 }
 
-<h1>QuizResult</h1>
+<div class="row justify-content-center pt-5">
+    <div class="col-lg-6">
+        <div class="card shadow-lg @statusClass" style="border-width: 5px;">
+            <div class="card-body p-5 text-center">
 
+                <i class="bi @iconClass display-1 mb-4" style="color: @(passed ? "green" : "red");"></i>
+
+                <h1 class="h3 fw-bold mb-4">@statusText</h1>
+
+                <div class="display-3 fw-bolder mb-4" style="color: @(passed ? "green" : "red");">
+                    @score / 100
+                </div>
+
+                <p class="lead">Bạn đã đạt được **@score** điểm trong bài kiểm tra này.</p>
+
+                @if (!passed)
+                {
+                    <p class="text-danger">Hãy xem lại bài giảng và thử lại để hoàn thành khóa học.</p>
+                }
+
+                <hr class="my-4" />
+
+                <div class="d-grid gap-2">
+                    <a asp-action="Watch" asp-route-lectureId="next" class="btn btn-primary btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> Quay lại Khóa học
+                    </a>
+                    @if (!passed)
+                    {
+                        <a asp-action="DoQuiz" asp-route-quizId="next" class="btn btn-outline-warning">
+                            <i class="bi bi-arrow-repeat"></i> Thử lại bài kiểm tra
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

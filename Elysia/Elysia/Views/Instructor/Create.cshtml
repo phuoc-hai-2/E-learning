@@ -1,7 +1,70 @@
-﻿
+﻿@model Elysia.Models.Course
+
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Tạo Khóa Học Mới";
 }
 
-<h1>Create</h1>
+<div class="row pt-4 justify-content-center">
+    <div class="col-lg-10">
+        <h1 class="display-5 fw-bold mb-4"><i class="bi bi-file-earmark-plus text-success"></i> @ViewData["Title"]</h1>
+        <p class="lead text-muted">Nhập các thông tin cơ bản để bắt đầu khóa học mới của bạn.</p>
 
+        <hr class="mb-5" />
+
+        <div class="card shadow-lg p-4">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="row">
+                    @* Cột 1: Thông tin cơ bản *@
+                    <div class="col-md-7">
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold">Tiêu đề Khóa học</label>
+                            <input asp-for="Title" class="form-control form-control-lg" placeholder="Ví dụ: Lập trình ASP.NET Core cơ bản" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">Mô tả Khóa học</label>
+                            <textarea asp-for="Description" class="form-control" rows="5" placeholder="Mô tả chi tiết nội dung khóa học, đối tượng học viên,..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Price" class="form-label fw-bold">Giá Khóa học (VNĐ)</label>
+                            <input asp-for="Price" class="form-control" type="number" min="0" step="1000" placeholder="0" />
+                            <span asp-validation-for="Price" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    @* Cột 2: Ảnh và Nút hành động *@
+                    <div class="col-md-5">
+                        <div class="card bg-light p-3 mb-4">
+                            <h6 class="card-title fw-bold mb-3">Hình ảnh đại diện</h6>
+                            @* FileUpload (Cần tạo ViewBag.ImageFile trong Controller) *@
+                            <input type="file" name="ImageFile" id="ImageFile" class="form-control" accept="image/*" required />
+                            <small class="text-muted mt-2">Kích thước đề nghị: 1200x675 pixels.</small>
+                        </div>
+
+                        <hr />
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-save"></i> Lưu & Tiếp tục Thêm bài giảng
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Hủy bỏ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

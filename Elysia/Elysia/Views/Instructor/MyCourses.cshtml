@@ -1,7 +1,56 @@
-﻿
+﻿@model IEnumerable<Elysia.Models.Enrollment>
+@* Model là danh sách các Enrollment (Lượt đăng ký) *@
+
 @{
-    ViewData["Title"] = "MyCourses";
+    ViewData["Title"] = "Các Khóa Học Của Tôi";
 }
 
-<h1>MyCourses</h1>
+<div class="pt-4">
+    <h1 class="display-5 fw-bold mb-4"><i class="bi bi-person-workspace text-primary"></i> Khóa Học Của Tôi</h1>
+    <p class="lead">Nơi theo dõi tiến trình học tập và tiếp tục các bài giảng còn dang dở.</p>
 
+    <hr class="mb-5" />
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center p-5 shadow-sm">
+            <h4 class="alert-heading">Bạn chưa đăng ký khóa học nào!</h4>
+            <p>Hãy khám phá các khóa học hấp dẫn của chúng tôi để bắt đầu hành trình học tập.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg mt-3">
+                <i class="bi bi-search"></i> Khám phá Khóa học
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var enrollment in Model)
+            {
+                var course = enrollment.Course;
+
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 overflow-hidden">
+                        <img src="@course.ImageUrl" class="card-img-top" alt="@course.Title" style="height: 180px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold text-truncate" title="@course.Title">@course.Title</h5>
+                            <p class="card-text small text-muted flex-grow-1">Giảng viên: **@course.User.FullName**</p>
+
+                            @* Thanh Tiến độ Học tập *@
+                            <div class="progress mb-2" role="progressbar" aria-label="Progress" aria-valuenow="@enrollment.ProgressPercent" aria-valuemin="0" aria-valuemax="100" style="height: 1.25rem;">
+                                <div class="progress-bar bg-success" style="width: @enrollment.ProgressPercent%;">
+                                    **@enrollment.ProgressPercent%**
+                                </div>
+                            </div>
+                            <small class="text-end text-muted">Đã hoàn thành</small>
+
+                            @* Nút Bắt đầu Học *@
+                            <a asp-controller="Courses" asp-action="Watch" asp-route-courseId="@course.CourseID" class="btn btn-primary mt-3">
+                                <i class="bi bi-play-circle-fill"></i> Tiếp tục học
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

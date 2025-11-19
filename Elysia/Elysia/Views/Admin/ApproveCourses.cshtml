@@ -1,7 +1,58 @@
-﻿
+﻿@model IEnumerable<Elysia.Models.Course>
+
 @{
-    ViewData["Title"] = "ApproveCourses";
+    ViewData["Title"] = "Duyệt Khóa học";
 }
 
-<h1>ApproveCourses</h1>
+<div class="container mt-4">
+    <h2 class="mb-4">📚 Duyệt Khóa học</h2>
+    <p>Danh sách Khóa học mới được Giảng viên tạo và đang chờ duyệt.</p>
 
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            Hiện không có Khóa học nào chờ duyệt.
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Tiêu đề Khóa học</th>
+                    <th>Giảng viên</th>
+                    <th>Giá (VNĐ)</th>
+                    <th>Ngày tạo</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var course in Model)
+                {
+                    <tr>
+                        <td>@course.Title</td>
+                        <td>@course.User.FullName</td>
+                        <td>@course.Price.ToString("N0")</td>
+                        <td>@course.CreatedAt.ToShortDateString()</td>
+                        <td>
+                            <form asp-controller="Admin" asp-action="ApproveCourse" method="post" style="display:inline;">
+                                <input type="hidden" name="courseId" value="@course.CourseID" />
+                                <button type="submit" class="btn btn-success btn-sm me-2"
+                                        onclick="return confirm('Xác nhận duyệt khóa học: @course.Title?');">
+                                    <i class="fas fa-check"></i> Duyệt
+                                </button>
+                            </form>
+                            <form asp-controller="Admin" asp-action="RejectCourse" method="post" style="display:inline;">
+                                <input type="hidden" name="courseId" value="@course.CourseID" />
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('CẢNH BÁO: Hành động này sẽ XÓA khóa học: @course.Title. Bạn có chắc không?');">
+                                    <i class="fas fa-times"></i> Xóa
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

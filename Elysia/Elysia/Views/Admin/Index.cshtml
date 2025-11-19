@@ -1,5 +1,48 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
 }
+
+<div class="container mt-4">
+    <h2 class="mb-4">⚡ Admin Dashboard</h2>
+    <p>Chào mừng trở lại, Quản trị viên.</p>
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Tổng Khóa học</h5>
+                    <p class="card-text fs-2">@(ViewBag.TotalCourses ?? "...")</p>
+                    <a asp-action="ApproveCourses" class="text-white">Xem khóa học chờ duyệt &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Tổng Người dùng</h5>
+                    <p class="card-text fs-2">@(ViewBag.TotalUsers ?? "...")</p>
+                    <a asp-action="ManageUsers" class="text-white">Quản lý người dùng &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title text-dark">Khóa học chờ duyệt</h5>
+                    <p class="card-text fs-2 text-dark">@(ViewBag.PendingCoursesCount ?? "...")</p>
+                    <a asp-action="ApproveCourses" class="text-dark">Xử lý ngay &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-5">Đường dẫn nhanh</h3>
+    <ul class="list-group">
+        <li class="list-group-item"><a asp-action="ApproveInstructors">Duyệt Giảng viên mới</a></li>
+        <li class="list-group-item"><a asp-action="ApproveCourses">Duyệt Khóa học mới</a></li>
+        <li class="list-group-item"><a asp-action="ManageUsers">Quản lý tất cả Người dùng</a></li>
+    </ul>
+</div>

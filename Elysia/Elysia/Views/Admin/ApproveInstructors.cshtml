@@ -1,7 +1,49 @@
-﻿
+﻿@model IEnumerable<Elysia.Models.ApplicationUser>
+
 @{
-    ViewData["Title"] = "ApproveInstructors";
+    ViewData["Title"] = "Duyệt Giảng viên";
 }
 
-<h1>ApproveInstructors</h1>
+<div class="container mt-4">
+    <h2 class="mb-4">📋 Duyệt Giảng viên mới</h2>
+    <p>Danh sách người dùng chưa được xác nhận Email (Giảng viên chờ duyệt).</p>
 
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            Hiện không có Giảng viên nào chờ duyệt.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Họ và Tên</th>
+                    <th>Email</th>
+                    <th>Ngày đăng ký</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@(user.FullName ?? "Chưa cập nhật")</td>
+                        <td>@user.Email</td>
+                        <td>@user.UserName</td>
+                        <td>
+                            <form asp-controller="Admin" asp-action="Approve" method="post" style="display:inline;">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="submit" class="btn btn-success btn-sm"
+                                        onclick="return confirm('Bạn có chắc chắn muốn duyệt Giảng viên @user.FullName không?');">
+                                    <i class="fas fa-check"></i> Duyệt
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

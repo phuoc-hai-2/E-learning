@@ -1,7 +1,79 @@
-﻿
+﻿@model Elysia.Models.Lecture
+@* Giả định Model là một đối tượng Lecture *@
+
 @{
-    ViewData["Title"] = "Watch";
+    ViewData["Title"] = Model.Title;
 }
 
-<h1>Watch</h1>
+<div class="row pt-4">
 
+    @* === Cột 1: Video và Nội dung Bài giảng (Lớn hơn) === *@
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body p-0">
+                @* Phần hiển thị Video/Tài liệu chính *@
+                @if (!string.IsNullOrEmpty(Model.VideoUrl))
+                {
+                    @* Thêm responsive embed cho video (ví dụ: YouTube) *@
+                    <div class="ratio ratio-16x9">
+                        <iframe src="@Model.VideoUrl" title="Video Lecture" allowfullscreen></iframe>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning m-3" role="alert">Không có video cho bài giảng này.</div>
+                }
+            </div>
+        </div>
+
+        @* Tiêu đề và Mô tả/Content *@
+        <h1 class="h3 mb-3">@Model.Title</h1>
+        <div class="p-3 bg-light rounded-3 mb-4">
+            @Html.Raw(Model.Content) @* Hiển thị nội dung text/HTML *@
+        </div>
+
+        @* Nút Hoàn thành và Chuyển Bài *@
+        <div class="d-flex justify-content-between mb-4">
+            <a asp-action="Watch" asp-route-lectureId="prev" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Bài trước
+            </a>
+            <button class="btn btn-success btn-lg">
+                <i class="bi bi-check-circle-fill"></i> Đánh dấu đã hoàn thành
+            </button>
+            <a asp-action="Watch" asp-route-lectureId="next" class="btn btn-outline-secondary">
+                Bài tiếp theo <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        @* Khu vực Thảo luận (Discussion) *@
+        @* (Cần Partial View riêng cho form và danh sách thảo luận) *@
+        <div class="mt-5">
+            <h2 class="h4 border-bottom pb-2 mb-3">Thảo luận</h2>
+            @* @await Html.PartialAsync("_DiscussionSection", Model.LectureID) *@
+        </div>
+    </div>
+
+    @* === Cột 2: Mục lục Khóa học (Nhỏ hơn) === *@
+    <div class="col-lg-4">
+        <div class="card shadow-sm sticky-top" style="top: 15px;">
+            <div class="card-header bg-primary text-white h6">
+                <i class="bi bi-list-task"></i> Nội dung Khóa học
+            </div>
+            <div class="list-group list-group-flush">
+                @* Vòng lặp để hiển thị các bài giảng (cần truyền danh sách Lectures từ Controller) *@
+                @* Ví dụ: @foreach (var lecture in ViewBag.CourseLectures) *@
+                <a href="#" class="list-group-item list-group-item-action active">
+                    <i class="bi bi-play-circle-fill"></i> @Model.Title
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <i class="bi bi-lock-fill"></i> Bài 2: Các khái niệm cơ bản
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @* Thêm script cho nút "Đã hoàn thành" (dùng AJAX) *@
+}

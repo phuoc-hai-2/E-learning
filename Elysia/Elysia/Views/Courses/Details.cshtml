@@ -1,7 +1,88 @@
-﻿
+﻿@model Elysia.Models.Course
+@* Giả định Model là một đối tượng Course đã được load kèm Lectures, User và Reviews *@
+
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Title;
 }
 
-<h1>Details</h1>
+<div class="row pt-4">
 
+    @* === Cột 1: Thông tin Khóa học và Giảng viên (Lớn hơn) === *@
+    <div class="col-lg-8">
+
+        <h1 class="display-4 fw-bold mb-3">@Model.Title</h1>
+        <p class="lead text-muted mb-4">@Model.Description</p>
+
+        @* Thông tin Giảng viên *@
+        <div class="d-flex align-items-center mb-4 p-3 border rounded-3 bg-light">
+            <img src="@Model.User.AvatarUrl" alt="Avatar" class="rounded-circle me-3" style="width: 50px; height: 50px;">
+            <div>
+                <small class="text-uppercase text-muted d-block">Giảng viên</small>
+                <h5 class="mb-0">@Model.User.FullName</h5>
+            </div>
+        </div>
+
+        @* Mục lục Khóa học *@
+        <div class="mt-5">
+            <h2 class="h4 border-bottom pb-2 mb-3"><i class="bi bi-book-half"></i> Nội dung Khóa học</h2>
+            <div class="accordion" id="courseContentAccordion">
+                @foreach (var lecture in Model.Lectures.OrderBy(l => l.Order))
+                {
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading_@lecture.LectureID">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse_@lecture.LectureID" aria-expanded="false"
+                                    aria-controls="collapse_@lecture.LectureID">
+                                Bài @lecture.Order: @lecture.Title
+                            </button>
+                        </h2>
+                        <div id="collapse_@lecture.LectureID" class="accordion-collapse collapse"
+                             aria-labelledby="heading_@lecture.LectureID" data-bs-parent="#courseContentAccordion">
+                            <div class="accordion-body small text-muted">
+                                @Html.Raw(lecture.Content?.Length > 150 ? lecture.Content.Substring(0, 150) + "..." : lecture.Content)
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @* Đánh giá (Reviews) *@
+        <div class="mt-5">
+            <h2 class="h4 border-bottom pb-2 mb-3"><i class="bi bi-star-fill"></i> Đánh giá của Học viên</h2>
+            @* @await Html.PartialAsync("_ReviewSection", Model.Reviews) *@
+        </div>
+    </div>
+
+    @* === Cột 2: Giá và Nút Đăng ký (Sticky) === *@
+    <div class="col-lg-4">
+        <div class="card shadow-lg sticky-top" style="top: 15px;">
+            @* Giả định ImageUrl được hiển thị ở đây *@
+            <img src="@Model.ImageUrl" class="card-img-top" alt="Course Image">
+            <div class="card-body">
+                <h2 class="card-title text-primary fw-bolder display-6 mb-3">@Model.Price.ToString("N0") VNĐ</h2>
+
+                @* Logic: Nếu đã đăng ký => Hiển thị nút "Học ngay", chưa đăng ký => Hiển thị "Mua khóa học" *@
+                <div class="d-grid gap-2">
+                    @* @if (ViewBag.IsEnrolled) *@
+                    <a asp-controller="Courses" asp-action="Watch" asp-route-courseId="@Model.CourseID" class="btn btn-success btn-lg">
+                        <i class="bi bi-play-fill"></i> Bắt đầu học
+                    </a>
+                    @* @else *@
+                    <form asp-controller="Courses" asp-action="Enroll" method="post">
+                        <input type="hidden" name="courseId" value="@Model.CourseID" />
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-cart-fill"></i> Mua Khóa học
+                        </button>
+                    </form>
+                </div>
+
+                <ul class="list-group list-group-flush mt-3 small">
+                    <li class="list-group-item"><i class="bi bi-clock-fill text-muted me-2"></i> Trọn đời truy cập</li>
+                    <li class="list-group-item"><i class="bi bi-camera-video-fill text-muted me-2"></i> @Model.Lectures.Count Bài giảng</li>
+                    <li class="list-group-item"><i class="bi bi-check2-circle text-muted me-2"></i> Cấp chứng chỉ hoàn thành</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
