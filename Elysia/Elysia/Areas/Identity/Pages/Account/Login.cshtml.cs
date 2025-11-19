@@ -30,58 +30,58 @@ namespace Elysia.Areas.Identity.Pages.Account
         }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///       This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///       directly from your code. This API may change or be removed in future releases.
         /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///       This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///       directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///       This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///       directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public string ReturnUrl { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///       This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///       directly from your code. This API may change or be removed in future releases.
         /// </summary>
         [TempData]
         public string ErrorMessage { get; set; }
 
         /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
+        ///       This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+        ///       directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public class InputModel
         {
             /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
+            ///       This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///       directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "Vui lòng nhập Email")]
             [EmailAddress]
             public string Email { get; set; }
 
             /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
+            ///       This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///       directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "Vui lòng nhập Mật khẩu")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 
             /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
+            ///       This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
+            ///       directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Display(Name = "Remember me?")]
+            [Display(Name = "Ghi nhớ tôi?")]
             public bool RememberMe { get; set; }
         }
 
@@ -113,11 +113,43 @@ namespace Elysia.Areas.Identity.Pages.Account
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    // =========================================================================
+                    // 🎯 LOGIC CHUYỂN HƯỚNG DỰA TRÊN VAI TRÒ (ROLE-BASED REDIRECTION)
+                    // =========================================================================
+
+                    // 1. Lấy thông tin user vừa đăng nhập
+                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+
+                    if (user != null)
+                    {
+                        // 2. Kiểm tra vai trò và chuyển hướng
+                        if (await _signInManager.UserManager.IsInRoleAsync(user, "Admin"))
+                        {
+                            // Chuyển hướng đến Dashboard Admin
+                            return Redirect("/Admin");
+                        }
+                        else if (await _signInManager.UserManager.IsInRoleAsync(user, "GiangVien"))
+                        {
+                            // Chuyển hướng đến Dashboard Giảng viên
+                            return Redirect("/Instructor");
+                        }
+                        else if (await _signInManager.UserManager.IsInRoleAsync(user, "SinhVien"))
+                        {
+                            // Chuyển hướng đến Dashboard Sinh viên (Courses)
+                            return Redirect("/Courses");
+                        }
+                    }
+
+                    // 3. Fallback: Nếu không có vai trò đặc biệt (hoặc không tìm thấy user), sử dụng URL trả về mặc định
                     return LocalRedirect(returnUrl);
+
                 }
+
                 if (result.RequiresTwoFactor)
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
@@ -129,7 +161,7 @@ namespace Elysia.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Đăng nhập thất bại. Vui lòng kiểm tra lại Email và Mật khẩu.");
                     return Page();
                 }
             }

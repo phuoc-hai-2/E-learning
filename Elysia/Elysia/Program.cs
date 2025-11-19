@@ -2,6 +2,8 @@
 using Elysia.Models; // using thư mục Models
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.UI.Services; // Thêm dòng này
+using Elysia.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 // 2. Đăng ký DbContext (ApplicationDbContext) với SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 // 3. Đăng ký Identity (QUAN TRỌNG)
 // Chúng ta dùng AddIdentity (thay vì AddDefaultIdentity)

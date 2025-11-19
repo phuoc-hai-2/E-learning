@@ -3,6 +3,30 @@
   "WorkspaceRootPath": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\elysia.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\elysia.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\services\\emailsender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\services\\emailsender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\views\\instructor\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\views\\instructor\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\views\\instructor\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\views\\instructor\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\views\\instructor\\mycourses.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\views\\instructor\\mycourses.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -11,20 +35,12 @@
       "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\views\\instructor\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\views\\instructor\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\models\\discussion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\models\\discussion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\views\\instructor\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|solutionrelative:elysia\\views\\instructor\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{90149BE0-E953-4308-A944-9CEDDF643FD9}|Elysia\\Elysia.csproj|c:\\users\\daoph\\onedrive\\ta\u0300i li\u00EA\u0323u\\github\\e-learning\\elysia\\elysia\\views\\courses\\quizresult.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -66,23 +82,63 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "Elysia\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "Elysia\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAACEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-19T18:43:01.116Z"
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Program.cs",
+              "RelativeDocumentMoniker": "Elysia\\Program.cs",
+              "ToolTip": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Program.cs",
+              "RelativeToolTip": "Elysia\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T19:02:05.66Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "EmailSender.cs",
+              "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Services\\EmailSender.cs",
+              "RelativeDocumentMoniker": "Elysia\\Services\\EmailSender.cs",
+              "ToolTip": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Services\\EmailSender.cs",
+              "RelativeToolTip": "Elysia\\Services\\EmailSender.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAYwB0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-19T19:01:28.799Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Elysia",
+              "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Elysia.csproj",
+              "RelativeDocumentMoniker": "Elysia\\Elysia.csproj",
+              "ToolTip": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Elysia.csproj",
+              "RelativeToolTip": "Elysia\\Elysia.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-19T19:01:01.028Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Admin\\Index.cshtml",
+              "RelativeDocumentMoniker": "Elysia\\Views\\Admin\\Index.cshtml",
+              "ToolTip": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Admin\\Index.cshtml",
+              "RelativeToolTip": "Elysia\\Views\\Admin\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-19T18:59:33.43Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "AdminController.cs",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Controllers\\AdminController.cs",
               "RelativeDocumentMoniker": "Elysia\\Controllers\\AdminController.cs",
@@ -94,7 +150,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 11,
               "Title": "Search.cshtml",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Courses\\Search.cshtml",
               "RelativeDocumentMoniker": "Elysia\\Views\\Courses\\Search.cshtml",
@@ -106,7 +162,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 12,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Courses\\Index.cshtml",
               "RelativeDocumentMoniker": "Elysia\\Views\\Courses\\Index.cshtml",
@@ -118,7 +174,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 13,
               "Title": "ApproveInstructors.cshtml",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Admin\\ApproveInstructors.cshtml",
               "RelativeDocumentMoniker": "Elysia\\Views\\Admin\\ApproveInstructors.cshtml",
@@ -130,7 +186,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "MyCourses.cshtml",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Instructor\\MyCourses.cshtml",
               "RelativeDocumentMoniker": "Elysia\\Views\\Instructor\\MyCourses.cshtml",
@@ -143,7 +199,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 10,
               "Title": "QuizResult.cshtml",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Courses\\QuizResult.cshtml",
               "RelativeDocumentMoniker": "Elysia\\Views\\Courses\\QuizResult.cshtml",
@@ -155,7 +211,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "Create.cshtml",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Instructor\\Create.cshtml",
               "RelativeDocumentMoniker": "Elysia\\Views\\Instructor\\Create.cshtml",
@@ -163,19 +219,8 @@
               "RelativeToolTip": "Elysia\\Views\\Instructor\\Create.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-15T19:24:46.004Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Discussion.cs",
-              "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Models\\Discussion.cs",
-              "RelativeDocumentMoniker": "Elysia\\Models\\Discussion.cs",
-              "ToolTip": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Models\\Discussion.cs",
-              "RelativeToolTip": "Elysia\\Models\\Discussion.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAQwBsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-16T03:56:14.049Z"
+              "WhenOpened": "2025-11-15T19:24:46.004Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -187,11 +232,36 @@
               "RelativeToolTip": "Elysia\\Views\\Instructor\\Index.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-15T19:23:10.397Z"
+              "WhenOpened": "2025-11-15T19:23:10.397Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 7,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Elysia\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Elysia\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-19T18:43:01.116Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Discussion.cs",
+              "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Models\\Discussion.cs",
+              "RelativeDocumentMoniker": "Elysia\\Models\\Discussion.cs",
+              "ToolTip": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Models\\Discussion.cs",
+              "RelativeToolTip": "Elysia\\Models\\Discussion.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAQwBsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-16T03:56:14.049Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "ApproveCourses.cshtml",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Admin\\ApproveCourses.cshtml",
               "RelativeDocumentMoniker": "Elysia\\Views\\Admin\\ApproveCourses.cshtml",
@@ -203,7 +273,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 16,
               "Title": "ManageQuiz.cshtml",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Instructor\\ManageQuiz.cshtml",
               "RelativeDocumentMoniker": "Elysia\\Views\\Instructor\\ManageQuiz.cshtml",
@@ -215,7 +285,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 17,
               "Title": "ManageCourse.cshtml",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Views\\Instructor\\ManageCourse.cshtml",
               "RelativeDocumentMoniker": "Elysia\\Views\\Instructor\\ManageCourse.cshtml",
@@ -227,7 +297,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 15,
               "Title": "InstructorController.cs",
               "DocumentMoniker": "C:\\Users\\daoph\\OneDrive\\Ta\u0300i li\u00EA\u0323u\\GitHub\\E-learning\\Elysia\\Elysia\\Controllers\\InstructorController.cs",
               "RelativeDocumentMoniker": "Elysia\\Controllers\\InstructorController.cs",

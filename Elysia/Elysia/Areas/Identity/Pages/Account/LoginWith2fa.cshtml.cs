@@ -114,7 +114,34 @@ namespace Elysia.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 _logger.LogInformation("User with ID '{UserId}' logged in with 2fa.", user.Id);
-                return LocalRedirect(returnUrl);
+
+                // =========================================================================
+                // 🎯 LOGIC CHUYỂN HƯỚNG DỰA TRÊN VAI TRÒ (ROLE-BASED REDIRECTION)
+                // =========================================================================
+
+                // user đã được lấy ở trên (var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();)
+                if (user != null)
+                {
+                    // Kiểm tra vai trò và chuyển hướng
+                    if (await _userManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        // Chuyển hướng đến Dashboard Admin
+                        return Redirect("/Admin");
+                    }
+                    else if (await _userManager.IsInRoleAsync(user, "GiangVien"))
+                    {
+                        // Chuyển hướng đến Dashboard Giảng viên
+                        return Redirect("/Instructor");
+                    }
+                    else if (await _userManager.IsInRoleAsync(user, "SinhVien"))
+                    {
+                        // Chuyển hướng đến Dashboard Sinh viên
+                        return Redirect("/Courses");
+                    }
+                }
+
+                // Fallback: Nếu không có vai trò đặc biệt, sử dụng URL trả về mặc định
+                return LocalRedirect(returnUrl);
             }
             else if (result.IsLockedOut)
             {

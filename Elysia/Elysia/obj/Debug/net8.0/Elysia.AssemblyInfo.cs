@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Elysia")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3198f5c5c33c3a727aacd0e7aff85a327f5d6476")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+51aa5bb8d524fb70c9d0c819c7c351f1412e3d9a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Elysia")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Elysia")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
