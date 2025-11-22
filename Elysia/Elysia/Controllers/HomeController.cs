@@ -1,7 +1,5 @@
-﻿using Elysia.Data; // using DbContext
-using Elysia.Models;
+﻿using Elysia.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // Cần cho .Include()
 using System.Diagnostics;
 
 namespace Elysia.Controllers
@@ -9,28 +7,25 @@ namespace Elysia.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context; // Inject DbContext
 
-        // Yêu cầu (Inject) DbContext và Logger qua constructor
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-            _context = context;
         }
 
-        // Trang chủ sẽ hiển thị danh sách khóa học
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            // Truy vấn CSDL:
-            // Lấy các khóa học ĐÃ ĐƯỢC DUYỆT (IsApproved == true)
-            // Dùng .Include() để load tên Giảng viên (từ bảng User)
-            var courses = await _context.Courses
-                                .Where(c => c.IsApproved == true)
-                                .Include(c => c.User) // "User" là thuộc tính navigation trong model Course
-                                .ToListAsync();
+            // LOGIC BỔ SUNG: Nếu người dùng đã đăng nhập rồi, đẩy họ về đúng trang Dashboard luôn
+            // thay vì bắt họ xem lại trang giới thiệu.
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("Admin")) return RedirectToAction("Index", "Admin");
+                if (User.IsInRole("GiangVien")) return RedirectToAction("Index", "Instructor");
+                if (User.IsInRole("SinhVien")) return RedirectToAction("Index", "Courses");
+            }
 
-            // Gửi danh sách khóa học này tới View
-            return View(courses);
+            // Nếu là khách (chưa đăng nhập), trả về View giới thiệu bình thường
+            return View();
         }
 
         public IActionResult Privacy()

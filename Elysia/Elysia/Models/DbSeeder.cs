@@ -1,7 +1,9 @@
-﻿using Elysia.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
 
-namespace Elysia.Data
+namespace Elysia.Models
 {
     public static class DbSeeder
     {

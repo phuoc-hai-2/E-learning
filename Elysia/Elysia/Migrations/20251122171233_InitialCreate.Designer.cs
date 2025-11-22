@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Elysia.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251115184056_AddOneToOneLectureQuizRelation")]
-    partial class AddOneToOneLectureQuizRelation
+    [Migration("20251122171233_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

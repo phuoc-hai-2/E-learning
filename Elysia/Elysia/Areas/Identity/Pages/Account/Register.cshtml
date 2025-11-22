@@ -12,7 +12,6 @@
                     <h1 class="h3 mb-0 fw-bold"><i class="fas fa-user-plus"></i> @ViewData["Title"]</h1>
                 </div>
                 <div class="card-body p-4 p-md-5">
-
                     <div class="row">
                         <div class="col-md-12">
                             <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
@@ -20,15 +19,17 @@
                                 <hr />
                                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
 
+                                @* --- Họ và tên --- *@
                                 <div class="form-floating mb-3">
-                                    <input asp-for="Input.FullName" class="form-control" placeholder="Họ và tên của bạn" autocomplete="name" aria-required="true" />
+                                    <input asp-for="Input.FullName" class="form-control" placeholder="Họ và tên đầy đủ" autocomplete="name" aria-required="true" />
                                     <label asp-for="Input.FullName">Họ và tên</label>
                                     <span asp-validation-for="Input.FullName" class="text-danger"></span>
                                 </div>
 
+                                @* --- Chọn Vai trò (Role) --- *@
                                 <div class="form-floating mb-3">
-                                    <select asp-for="Input.Role" class="form-control" aria-required="true">
-                                        <option value="">-- Chọn loại tài khoản --</option>
+                                    <select asp-for="Input.Role" class="form-select" aria-required="true">
+                                        <option value="" disabled selected>-- Bạn muốn đăng ký là? --</option>
                                         <option value="SinhVien">🎓 Sinh viên (Học viên)</option>
                                         <option value="GiangVien">👨‍🏫 Giảng viên (Tạo khóa học)</option>
                                     </select>
@@ -36,18 +37,21 @@
                                     <span asp-validation-for="Input.Role" class="text-danger"></span>
                                 </div>
 
+                                @* --- Email --- *@
                                 <div class="form-floating mb-3">
                                     <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                                     <label asp-for="Input.Email">Email</label>
                                     <span asp-validation-for="Input.Email" class="text-danger"></span>
                                 </div>
 
+                                @* --- Mật khẩu --- *@
                                 <div class="form-floating mb-3">
                                     <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Mật khẩu" />
                                     <label asp-for="Input.Password">Mật khẩu</label>
                                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                                 </div>
 
+                                @* --- Xác nhận Mật khẩu --- *@
                                 <div class="form-floating mb-4">
                                     <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Xác nhận mật khẩu" />
                                     <label asp-for="Input.ConfirmPassword">Xác nhận mật khẩu</label>
@@ -64,6 +68,7 @@
                             </form>
                         </div>
 
+                        @* --- External Login (Google/Facebook...) --- *@
                         @if (Model.ExternalLogins?.Count > 0)
                         {
                             <div class="col-md-12">
@@ -73,8 +78,8 @@
                                         <div>
                                             @foreach (var provider in Model.ExternalLogins!)
                                             {
-                                                <button type="submit" class="btn btn-outline-secondary w-100 mb-2" name="provider" value="@provider.Name" title="Đăng nhập bằng tài khoản @provider.DisplayName">
-                                                    Đăng nhập bằng @provider.DisplayName
+                                                <button type="submit" class="btn btn-outline-secondary w-100 mb-2" name="provider" value="@provider.Name" title="Đăng nhập bằng @provider.DisplayName">
+                                                    <i class="fab fa-google"></i> Đăng nhập bằng @provider.DisplayName
                                                 </button>
                                             }
                                         </div>

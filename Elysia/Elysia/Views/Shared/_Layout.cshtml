@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Elysia.styles.css" asp-append-version="true" />
+    <!-- Thêm Font Awesome nếu cần cho icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
     <header>
@@ -19,18 +21,58 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            // === GIAO DIỆN CHO ADMIN ===
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Dashboard Admin</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="ApproveInstructors">Duyệt Giảng Viên</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="ApproveCourses">Duyệt Khóa Học</a>
+                                </li>
+                            }
+                            // === GIAO DIỆN CHO GIẢNG VIÊN ===
+                            else if (User.IsInRole("GiangVien"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Instructor" asp-action="Index">Thống kê</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Instructor" asp-action="MyCourses">Khóa học của tôi</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Instructor" asp-action="Create">Tạo khóa mới</a>
+                                </li>
+                            }
+                            // === GIAO DIỆN CHO SINH VIÊN ===
+                            else if (User.IsInRole("SinhVien"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Courses" asp-action="Index">Việc học tập</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Courses" asp-action="Search">Tìm khóa học</a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            // === GIAO DIỆN CHO KHÁCH (CHƯA LOGIN) ===
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Về chúng tôi</a>
+                            </li>
+                        }
                     </ul>
-
-                    @* --- DÒNG BẠN CẦN THÊM VÀO --- *@
                     <partial name="_LoginPartial" />
-                    @* --------------------------------- *@
-
                 </div>
             </div>
         </nav>

@@ -500,7 +500,8 @@ namespace Elysia.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Quizzes_LectureID",
                 table: "Quizzes",
-                column: "LectureID");
+                column: "LectureID",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_CourseID",

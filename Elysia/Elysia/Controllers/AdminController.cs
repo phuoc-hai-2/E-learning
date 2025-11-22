@@ -1,13 +1,17 @@
 ﻿using Elysia.Data;
 using Elysia.Models;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization; // Bắt buộc có
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Elysia.Controllers
 {
-    [Authorize(Roles = "Admin")] // Khóa toàn bộ Controller chỉ cho Admin
+    // --- QUAN TRỌNG: Dòng này biến Controller này thành khu vực riêng cho Admin ---
+    [Authorize(Roles = "Admin")]
+    // ------------------------------------------------------------------------------
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,61 +24,56 @@ namespace Elysia.Controllers
         }
 
         // GET: /Admin/Index
-        // Dashboard Admin
         public IActionResult Index()
         {
-            // TODO: Lấy data thống kê (tổng user, tổng khóa học...)
-            // Trả về View tại: Views/Admin/Index.cshtml
+            // Thống kê cơ bản
+            ViewBag.TotalUsers = _context.Users.Count();
+            ViewBag.TotalCourses = _context.Courses.Count();
             return View();
         }
 
         // GET: /Admin/ApproveInstructors
-        // Duyệt Giảng viên
-        [HttpGet]
         public async Task<IActionResult> ApproveInstructors()
         {
-            // TODO: Code logic lấy Giảng viên chờ duyệt (EmailConfirmed = false)
-            // (Đã có ở các prompt trước)
+            // Lấy danh sách User là Giảng viên (Role) NHƯNG chưa xác thực email (EmailConfirmed = false)
+            var pendingInstructors = await _context.Users
+                .Where(u => !u.EmailConfirmed && _context.UserRoles
+                    .Any(ur => ur.UserId == u.Id && ur.RoleId == _context.Roles.FirstOrDefault(r => r.Name == "GiangVien").Id))
+                .ToListAsync();
 
-            // Trả về View tại: Views/Admin/ApproveInstructors.cshtml
-            var pendingInstructors = await _context.Users.Where(u => !u.EmailConfirmed).ToListAsync(); // Cần logic lọc Role
             return View(pendingInstructors);
         }
 
         // POST: /Admin/Approve
-        // Xử lý duyệt Giảng viên
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(string userId)
         {
-            // TODO: Code logic set user.EmailConfirmed = true
-            // (Đã có ở các prompt trước)
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                // Phê duyệt bằng cách set EmailConfirmed = true
+                user.EmailConfirmed = true;
+                await _userManager.UpdateAsync(user);
+            }
             return RedirectToAction(nameof(ApproveInstructors));
         }
 
         // GET: /Admin/ApproveCourses
-        // Trang duyệt khóa học
-        [HttpGet]
         public async Task<IActionResult> ApproveCourses()
         {
-            // TODO: Lấy các khóa học có IsApproved == false
             var pendingCourses = await _context.Courses
                 .Where(c => !c.IsApproved)
-                .Include(c => c.User) // Kèm tên Giảng viên
+                .Include(c => c.User)
                 .ToListAsync();
-
-            // Trả về View tại: Views/Admin/ApproveCourses.cshtml
             return View(pendingCourses);
         }
 
         // POST: /Admin/ApproveCourse
-        // Xử lý duyệt 1 khóa học
-        [HttpGet]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveCourse(int courseId)
         {
-            // TODO: Tìm khóa học và set course.IsApproved = true
             var course = await _context.Courses.FindAsync(courseId);
             if (course != null)
             {
@@ -84,13 +83,11 @@ namespace Elysia.Controllers
             return RedirectToAction(nameof(ApproveCourses));
         }
 
-        // POST: /Admin/RejectCourse
-        // Xử lý HỦY/XÓA 1 khóa học
+        // POST: /Admin/RejectCourse (Xóa khóa học không đạt)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RejectCourse(int courseId)
         {
-            // TODO: Tìm và XÓA khóa học (cẩn thận)
             var course = await _context.Courses.FindAsync(courseId);
             if (course != null)
             {
@@ -101,24 +98,17 @@ namespace Elysia.Controllers
         }
 
         // GET: /Admin/ManageUsers
-        // Quản lý tất cả người dùng
-        [HttpGet]
         public async Task<IActionResult> ManageUsers()
         {
-            // TODO: Lấy danh sách TOÀN BỘ người dùng
             var users = await _context.Users.ToListAsync();
-
-            // Trả về View tại: Views/Admin/ManageUsers.cshtml
             return View(users);
         }
 
         // POST: /Admin/DeleteUser
-        // Xóa 1 người dùng
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string userId)
         {
-            // TODO: Tìm và XÓA 1 user
             var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
