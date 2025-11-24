@@ -26,23 +26,17 @@ namespace Elysia.Controllers
         {
             return User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
-
-        // ======================================================
-        // CHỨC NĂNG TỪ STUDENTCONTROLLER (CŨ)
-        // ======================================================
-
         // GET: /Courses/Index
-        // Dashboard Sinh viên (Các khóa học CỦA TÔI)
+        // GET: /Courses/Index
         public async Task<IActionResult> Index()
         {
             var userId = GetCurrentUserId();
-
             var myEnrollments = await _context.Enrollments
                 .Where(e => e.UserId == userId)
                 .Include(e => e.Course)
                 .ThenInclude(c => c.User)
+                .OrderByDescending(e => e.EnrollmentDate)
                 .ToListAsync();
-
             return View(myEnrollments);
         }
 
