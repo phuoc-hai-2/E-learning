@@ -1,62 +1,61 @@
 ﻿@model Elysia.Models.Quiz
-@* Giả định Model là một đối tượng Quiz đã được load kèm Questions và Answers *@
-
 @{
-    ViewData["Title"] = "Làm Bài Kiểm tra: " + Model.Title;
+    ViewData["Title"] = "Bài tập trắc nghiệm";
 }
 
-<div class="row justify-content-center pt-4">
-    <div class="col-lg-8">
-        <div class="card shadow-lg">
-            <div class="card-header bg-warning text-dark h4 text-center">
-                <i class="bi bi-alarm-fill"></i> Bài Kiểm tra: @Model.Title
-            </div>
-            <div class="card-body p-4">
-                <p class="text-center text-muted">Tổng cộng **@Model.Questions.Count** câu hỏi. Thời gian: 30 phút.</p>
+<div class="container mt-5" style="max-width: 800px;">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient bg-primary text-white text-center py-4 rounded-top">
+            <h2 class="fw-bold mb-0"><i class="fas fa-puzzle-piece"></i> @Model.Title</h2>
+            <p class="mb-0 opacity-75">Chọn đáp án đúng nhất cho mỗi câu hỏi</p>
+        </div>
+        <div class="card-body p-5 bg-light">
+            <form asp-action="SubmitQuiz" method="post">
+                <input type="hidden" name="quizId" value="@Model.QuizID" />
 
-                <form asp-action="SubmitQuiz" method="post">
-                    <input type="hidden" name="quizId" value="@Model.QuizID" />
-
-                    @for (int i = 0; i < Model.Questions.Count; i++)
+                @if (!Model.Questions.Any())
+                {
+                    <div class="alert alert-warning text-center">Chưa có câu hỏi nào.</div>
+                }
+                else
+                {
+                    int i = 1;
+                    foreach (var q in Model.Questions)
                     {
-                        var question = Model.Questions.ElementAt(i);
-                        <div class="card mb-4 border-primary">
-                            <div class="card-header h6 bg-light">
-                                Câu hỏi @(i + 1):
-                            </div>
-                            <div class="card-body">
-                                <p class="card-text fw-bold">@question.QuestionText</p>
-
-                                @* Hiển thị các câu trả lời (Radio button) *@
-                                <div class="mt-3">
-                                    @foreach (var answer in question.Answers)
+                        <div class="card mb-4 border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold text-dark mb-3"><span class="badge bg-secondary me-2">Câu @i</span> @q.QuestionText</h5>
+                                <div class="vstack gap-2">
+                                    @foreach (var ans in q.Answers)
                                     {
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="radio"
-                                                   name="question_@question.QuestionID"
-                                                   id="answer_@answer.AnswerID"
-                                                   value="@answer.AnswerID" required>
-                                            <label class="form-check-label" for="answer_@answer.AnswerID">
-                                                @answer.AnswerText
-                                            </label>
-                                        </div>
+                                        <label class="btn btn-outline-dark text-start p-3 rounded-3 border-2 position-relative">
+                                            <input type="radio" name="answers[@q.QuestionID]" value="@ans.AnswerID" class="btn-check" required>
+                                            <span class="fw-semibold">@ans.AnswerText</span>
+                                        </label>
                                     }
                                 </div>
                             </div>
                         </div>
+                        i++;
                     }
-
-                    <div class="text-center mt-5">
-                        <button type="submit" class="btn btn-success btn-lg px-5">
-                            <i class="bi bi-send-fill"></i> Nộp bài kiểm tra
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success btn-lg px-5 py-3 rounded-pill fw-bold shadow">
+                            <i class="fas fa-paper-plane me-2"></i> Nộp bài & Xem điểm
                         </button>
                     </div>
-                </form>
-            </div>
+                }
+            </form>
         </div>
     </div>
 </div>
+<style>
+    .btn-check:checked + span {
+        color: white;
+    }
 
-@section Scripts {
-    @* Thêm đồng hồ đếm ngược (nếu cần) *@
-}
+    .btn-outline-dark:has(:checked) {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+</style>

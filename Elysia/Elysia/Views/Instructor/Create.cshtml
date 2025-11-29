@@ -13,7 +13,7 @@
 
         <div class="card shadow-lg p-4">
             <form asp-action="Create" enctype="multipart/form-data">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
 
                 <div class="row">
                     @* Cột 1: Thông tin cơ bản *@
@@ -40,7 +40,7 @@
                     @* Cột 2: Ảnh và Nút hành động *@
                     <div class="col-md-5">
                         <div class="card bg-light p-3 mb-4">
-                            <h6 class="card-title fw-bold mb-3">Hình ảnh đại diện</h6>
+                            <h6 class="card-title fw-bold mb-3">tai lieu</h6>
                             @* FileUpload (Cần tạo ViewBag.ImageFile trong Controller) *@
                             <input type="file" name="ImageFile" id="ImageFile" class="form-control" accept="image/*" required />
                             <small class="text-muted mt-2">Kích thước đề nghị: 1200x675 pixels.</small>

@@ -8,21 +8,20 @@ namespace Elysia.Models
         [Key]
         public int ReviewID { get; set; }
 
-        // Số sao đánh giá (ví dụ: 1 đến 5)
         [Range(1, 5)]
         public int Rating { get; set; }
 
         [StringLength(1000)]
         public string? Comment { get; set; }
 
-        public DateTime ReviewDate { get; set; } = DateTime.Now;
+        // --- SỬA TÊN: ReviewDate -> CreatedAt ---
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // --- KHÓA NGOẠI (Tới Sinh viên) ---
+        // --- Khóa ngoại ---
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; }
 
-        // --- KHÓA NGOẠI (Tới Khóa học) ---
         public int CourseID { get; set; }
         [ForeignKey("CourseID")]
         public virtual Course Course { get; set; }

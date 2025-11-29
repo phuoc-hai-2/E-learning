@@ -1,96 +1,133 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Elysia</title>
+    <title>@ViewData["Title"] - Elysia E-Learning</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Elysia.styles.css" asp-append-version="true" />
-    <!-- Thêm Font Awesome nếu cần cho icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        .hover-shadow:hover {
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+            transition: .3s;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+    </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100 bg-light">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Elysia</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-primary fs-4" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-graduation-cap"></i> Elysia
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-
                         @if (User.Identity.IsAuthenticated)
                         {
-                            // === GIAO DIỆN CHO ADMIN ===
                             @if (User.IsInRole("Admin"))
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Dashboard Admin</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="ApproveInstructors">Duyệt Giảng Viên</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="ApproveCourses">Duyệt Khóa Học</a>
-                                </li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Admin" asp-action="ManageCourses">Quản lý Khóa học</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Admin" asp-action="ApproveInstructors">Duyệt Giảng viên</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Admin" asp-action="ManageUsers">Người dùng</a></li>
                             }
-                            // === GIAO DIỆN CHO GIẢNG VIÊN ===
                             else if (User.IsInRole("GiangVien"))
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Instructor" asp-action="Index">Thống kê</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Instructor" asp-action="MyCourses">Khóa học của tôi</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Instructor" asp-action="Create">Tạo khóa mới</a>
-                                </li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Instructor" asp-action="Index">Thống kê</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Instructor" asp-action="MyCourses">Khóa học của tôi</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Instructor" asp-action="Create">Đăng bài mới</a></li>
                             }
-                            // === GIAO DIỆN CHO SINH VIÊN ===
                             else if (User.IsInRole("SinhVien"))
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Courses" asp-action="Index">Việc học tập</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Courses" asp-action="Search">Tìm khóa học</a>
-                                </li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Courses" asp-action="Index">Học tập</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Courses" asp-action="Search">Tìm khóa học</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-controller="Payment" asp-action="Index">Lịch sử giao dịch</a></li>
                             }
                         }
                         else
                         {
-                            // === GIAO DIỆN CHO KHÁCH (CHƯA LOGIN) ===
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Trang chủ</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Về chúng tôi</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
                         }
                     </ul>
-                    <partial name="_LoginPartial" />
+
+                    <ul class="navbar-nav align-items-center">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown me-3">
+                                <a class="nav-link text-dark position-relative" href="#" id="notiDropdown" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-bell fa-lg"></i>
+                                    <span id="noti-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none; font-size: 0.6rem;">0</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0" id="noti-list" style="width: 320px; max-height: 400px; overflow-y: auto;">
+                                    <li><h6 class="dropdown-header">Thông báo mới</h6></li>
+                                    <li><hr class="dropdown-divider m-0"></li>
+                                    <li class="text-center p-3 text-muted"><small>Đang tải...</small></li>
+                                </ul>
+                            </li>
+                        }
+                        <partial name="_LoginPartial" />
+                    </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Elysia - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <main role="main" class="container pb-3 flex-grow-1">
+        @RenderBody()
+    </main>
+
+    <footer class="border-top footer text-muted bg-white py-3 mt-auto">
+        <div class="container text-center">
+            &copy; 2025 - Elysia E-Learning Platform
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script>
+            $(document).ready(function() {
+                loadNotifications();
+                setInterval(loadNotifications, 60000);
+
+                function loadNotifications() {
+                    $.get("/Notification/GetNotifications", function(data) {
+                        if (data.unreadCount > 0) {
+                            $("#noti-badge").text(data.unreadCount).show();
+                        } else {
+                            $("#noti-badge").hide();
+                        }
+                        var html = '<li><h6 class="dropdown-header fw-bold text-primary">Thông báo</h6></li><li><hr class="dropdown-divider m-0"></li>';
+                        if(data.notifications.length === 0) {
+                            html += '<li class="text-center p-3 text-muted small">Không có thông báo mới</li>';
+                        } else {
+                            $.each(data.notifications, function(i, item) {
+                                var bgStyle = item.isRead ? 'bg-white' : 'bg-light fw-semibold';
+                                html += `<li><a class="dropdown-item ${bgStyle} py-2 text-wrap border-bottom" href="${item.url}" onclick="markRead(${item.notificationID})">
+                                            <span class="d-block text-dark small">${item.message}</span>
+                                            <small class="text-muted" style="font-size: 0.7rem;"><i class="far fa-clock"></i> ${item.createdAt}</small>
+                                         </a></li>`;
+                            });
+                        }
+                        $("#noti-list").html(html);
+                    });
+                }
+            });
+            function markRead(id) { $.post("/Notification/MarkAsRead", { id: id }); }
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

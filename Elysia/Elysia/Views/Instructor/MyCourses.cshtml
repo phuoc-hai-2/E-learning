@@ -1,87 +1,54 @@
 ﻿@model IEnumerable<Elysia.Models.Course>
 @{
-    ViewData["Title"] = "Quản lý Khóa học";
+    ViewData["Title"] = "Quản lý khóa học";
 }
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-chalkboard-teacher text-primary"></i> Khóa học của tôi</h1>
-            <p class="text-muted small mb-0">Quản lý các khóa học bạn đang giảng dạy</p>
-        </div>
-        <a asp-action="Create" class="btn btn-success shadow-sm">
-            <i class="fas fa-plus-circle"></i> Tạo khóa học mới
-        </a>
+        <h2 class="fw-bold"><i class="fas fa-chalkboard-teacher text-primary"></i> Khóa học của tôi</h2>
+        <a asp-action="Create" class="btn btn-success shadow-sm"><i class="fas fa-plus"></i> Tạo khóa học mới</a>
     </div>
 
     @if (!Model.Any())
     {
-        <div class="text-center py-5 bg-light rounded-3">
-            <img src="https://cdn-icons-png.flaticon.com/512/7486/7486747.png" style="width: 80px; opacity: 0.5" alt="Empty" />
-            <h5 class="mt-3 text-muted">Bạn chưa tạo khóa học nào.</h5>
-            <a asp-action="Create" class="btn btn-primary mt-2">Bắt đầu ngay</a>
+        <div class="text-center py-5 bg-white rounded shadow-sm">
+            <h5 class="text-muted">Bạn chưa có khóa học nào.</h5>
         </div>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            @foreach (var item in Model)
-            {
-                <div class="col">
-                    <div class="card h-100 border-0 shadow-sm hover-shadow transition">
-                        @* Ảnh bìa khóa học *@
-                        <div class="position-relative">
-                            <img src="@(item.ImageUrl ?? "/images/default-course.png")" class="card-img-top" alt="@item.Title" style="height: 180px; object-fit: cover;">
-
-                            @* Trạng thái duyệt *@
-                            <span class="position-absolute top-0 end-0 m-2 badge @(item.IsApproved ? "bg-success" : "bg-warning text-dark")">
-                                @(item.IsApproved ? "Đã duyệt" : "Chờ duyệt")
-                            </span>
-                        </div>
-
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title fw-bold text-truncate" title="@item.Title">@item.Title</h5>
-
-                            <div class="mb-3">
-                                <span class="fw-bold text-primary">
-                                    @(item.Price == 0 ? "Miễn phí" : item.Price.ToString("N0") + " đ")
-                                </span>
-                            </div>
-
-                            <p class="card-text text-muted small flex-grow-1">
-                                @(item.Description != null && item.Description.Length > 80
-                                                        ? item.Description.Substring(0, 80) + "..."
-                                                        : item.Description)
-                    </p>
-
-                            @* Các nút hành động *@
-                            <div class="d-grid gap-2 mt-3">
-                                <a asp-action="ManageCourse" asp-route-id="@item.CourseID" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-edit"></i> Quản lý Bài giảng
-                                </a>
-
-                                @* Nút xóa (Có thể thêm modal xác nhận sau) *@
-                                @* <form asp-action="Delete" asp-route-id="@item.CourseID" method="post" class="d-grid">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa khóa học này?');">
-                                        <i class="fas fa-trash"></i> Xóa
-                                    </button>
-                                </form> *@
-                            </div>
-                        </div>
-                        <div class="card-footer bg-white text-muted small">
-                            <i class="far fa-clock"></i> Tạo ngày: @item.CreatedAt.ToString("dd/MM/yyyy")
-                        </div>
-                    </div>
-                </div>
-                }
+        <div class="table-responsive bg-white rounded shadow-sm">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Khóa học</th>
+                        <th>Giá</th>
+                        <th>Ngày tạo</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end pe-4">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <img src="@(item.ImageUrl ?? "/images/default-course.png")" class="rounded me-3" width="50" height="50" style="object-fit:cover;">
+                                    <div class="fw-bold">@item.Title</div>
+                                </div>
+                            </td>
+                            <td>@(item.Price == 0 ? "Miễn phí" : item.Price.ToString("N0") + " đ")</td>
+                            <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            <td><span class="badge bg-success">Đã hiển thị</span></td>
+                            <td class="text-end pe-4">
+                                <a asp-action="EditCourse" asp-route-id="@item.CourseID" class="btn btn-sm btn-outline-secondary me-1" title="Sửa thông tin"><i class="fas fa-pen"></i></a>
+                                <a asp-action="ManageCourse" asp-route-id="@item.CourseID" class="btn btn-sm btn-primary" title="Quản lý nội dung"><i class="fas fa-list"></i> Nội dung</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     }
 </div>
-
-<style>
-    .hover-shadow:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
-        transition: all 0.3s ease;
-    }
-</style>

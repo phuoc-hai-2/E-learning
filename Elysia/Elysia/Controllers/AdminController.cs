@@ -1,17 +1,13 @@
 ﻿using Elysia.Data;
 using Elysia.Models;
-using Microsoft.AspNetCore.Authorization; // Bắt buộc có
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Elysia.Controllers
 {
-    // --- QUAN TRỌNG: Dòng này biến Controller này thành khu vực riêng cho Admin ---
     [Authorize(Roles = "Admin")]
-    // ------------------------------------------------------------------------------
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -26,7 +22,6 @@ namespace Elysia.Controllers
         // GET: /Admin/Index
         public IActionResult Index()
         {
-            // Thống kê cơ bản
             ViewBag.TotalUsers = _context.Users.Count();
             ViewBag.TotalCourses = _context.Courses.Count();
             return View();
@@ -35,12 +30,10 @@ namespace Elysia.Controllers
         // GET: /Admin/ApproveInstructors
         public async Task<IActionResult> ApproveInstructors()
         {
-            // Lấy danh sách User là Giảng viên (Role) NHƯNG chưa xác thực email (EmailConfirmed = false)
             var pendingInstructors = await _context.Users
                 .Where(u => !u.EmailConfirmed && _context.UserRoles
                     .Any(ur => ur.UserId == u.Id && ur.RoleId == _context.Roles.FirstOrDefault(r => r.Name == "GiangVien").Id))
                 .ToListAsync();
-
             return View(pendingInstructors);
         }
 
@@ -52,7 +45,6 @@ namespace Elysia.Controllers
             var user = await _userManager.FindByIdAsync(userId);
             if (user != null)
             {
-                // Phê duyệt bằng cách set EmailConfirmed = true
                 user.EmailConfirmed = true;
                 await _userManager.UpdateAsync(user);
             }
@@ -60,6 +52,7 @@ namespace Elysia.Controllers
         }
 
         // GET: /Admin/ApproveCourses
+        // (Trang này sẽ trống nếu tất cả khóa học đều Auto-Approve, nhưng giữ lại để phòng hờ)
         public async Task<IActionResult> ApproveCourses()
         {
             var pendingCourses = await _context.Courses
@@ -83,7 +76,7 @@ namespace Elysia.Controllers
             return RedirectToAction(nameof(ApproveCourses));
         }
 
-        // POST: /Admin/RejectCourse (Xóa khóa học không đạt)
+        // POST: /Admin/RejectCourse
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RejectCourse(int courseId)
@@ -115,6 +108,39 @@ namespace Elysia.Controllers
                 await _userManager.DeleteAsync(user);
             }
             return RedirectToAction(nameof(ManageUsers));
+        }
+
+        // =======================================================================
+        // --- PHẦN MỚI THÊM: QUẢN LÝ TOÀN BỘ KHÓA HỌC (VÌ KHÔNG CÒN CHỜ DUYỆT) ---
+        // =======================================================================
+
+        // GET: /Admin/ManageCourses
+        // Trang liệt kê TẤT CẢ khóa học đang có trên hệ thống
+        public async Task<IActionResult> ManageCourses()
+        {
+            var allCourses = await _context.Courses
+                .Include(c => c.User) // Lấy tên giảng viên
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+
+            return View(allCourses);
+        }
+
+        // POST: /Admin/DeleteCourse
+        // Admin dùng cái này để gỡ bỏ khóa học vi phạm
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCourse(int courseId)
+        {
+            var course = await _context.Courses.FindAsync(courseId);
+            if (course != null)
+            {
+                // Xóa khóa học
+                _context.Courses.Remove(course);
+                await _context.SaveChangesAsync();
+            }
+            // Quay lại trang quản lý toàn bộ
+            return RedirectToAction(nameof(ManageCourses));
         }
     }
 }

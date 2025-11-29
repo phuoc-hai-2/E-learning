@@ -31,6 +31,7 @@ namespace Elysia.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Discussion> Discussions { get; set; }
         public DbSet<LectureCompletion> LectureCompletions { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         // Bảng Quản lý Thanh toán
         public DbSet<Payment> Payments { get; set; }

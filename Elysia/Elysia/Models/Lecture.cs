@@ -26,5 +26,6 @@ namespace Elysia.Models
         [ForeignKey("CourseID")]
         public virtual Course Course { get; set; }
         public virtual Quiz Quiz { get; set; }
+        public virtual ICollection<Discussion> Discussions { get; set; }
     }
 }

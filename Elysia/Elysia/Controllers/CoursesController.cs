@@ -3,13 +3,11 @@ using Elysia.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // <-- LỖI 1: Đã sửa (Microsoft_FrameworkCore -> Microsoft.EntityFrameworkCore)
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Linq; // Cần cho .Where(), .Select()
 
 namespace Elysia.Controllers
 {
-    // === KHÓA TOÀN BỘ CONTROLLER CHỈ CHO SINH VIÊN ===
     [Authorize(Roles = "SinhVien")]
     public class CoursesController : Controller
     {
@@ -22,121 +20,74 @@ namespace Elysia.Controllers
             _userManager = userManager;
         }
 
-        private string GetCurrentUserId()
-        {
-            return User.FindFirstValue(ClaimTypes.NameIdentifier);
-        }
-        // GET: /Courses/Index
-        // GET: /Courses/Index
+        private string GetCurrentUserId() => User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        // 1. Dashboard Sinh Viên
         public async Task<IActionResult> Index()
         {
             var userId = GetCurrentUserId();
             var myEnrollments = await _context.Enrollments
                 .Where(e => e.UserId == userId)
-                .Include(e => e.Course)
-                .ThenInclude(c => c.User)
+                .Include(e => e.Course).ThenInclude(c => c.User)
                 .OrderByDescending(e => e.EnrollmentDate)
                 .ToListAsync();
             return View(myEnrollments);
         }
 
-        // GET: /Courses/MyProgress
-        // Trang xem Tiến độ chi tiết
-        public async Task<IActionResult> MyProgress()
-        {
-            var userId = GetCurrentUserId();
-            // TODO: Lấy các Enrollment và tính toán tiến độ
-
-            return View();
-        }
-
-        // ======================================================
-        // CHỨC NĂNG TỪ COURSESCONTROLLER (CŨ)
-        // ======================================================
-
-        // GET: /Courses/Search
-        // Trang TÌM KIẾM & XEM DANH SÁCH (Để đăng ký khóa mới)
+        // 2. Tìm kiếm khóa học
         public async Task<IActionResult> Search(string searchQuery)
         {
             var userId = GetCurrentUserId();
+            var enrolledIds = await _context.Enrollments.Where(e => e.UserId == userId).Select(e => e.CourseID).ToListAsync();
 
-            var enrolledCourseIds = await _context.Enrollments
-                .Where(e => e.UserId == userId)
-                .Select(e => e.CourseID)
-                .ToListAsync();
+            var courses = _context.Courses
+                .Where(c => c.IsApproved && !enrolledIds.Contains(c.CourseID));
 
-            // --- LỖI 2: ĐÃ SỬA LOGIC TRUY VẤN ---
-            // 1. Bắt đầu truy vấn (IQueryable)
-            IQueryable<Course> availableCoursesQuery = _context.Courses
-                .Where(c => c.IsApproved && !enrolledCourseIds.Contains(c.CourseID));
-
-            // 2. Thêm điều kiện tìm kiếm nếu có
-            if (!String.IsNullOrEmpty(searchQuery))
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                availableCoursesQuery = availableCoursesQuery.Where(c => c.Title.Contains(searchQuery));
+                courses = courses.Where(c => c.Title.Contains(searchQuery));
             }
 
-            // 3. Include Giảng viên và thực thi
-            var availableCourses = await availableCoursesQuery
-                                        .Include(c => c.User)
-                                        .ToListAsync();
-            // --- KẾT THÚC SỬA LỖI 2 ---
-
-            return View(availableCourses);
+            return View(await courses.Include(c => c.User).ToListAsync());
         }
 
-        // GET: /Courses/Details/5
-        // Trang XEM CHI TIẾT khóa học
+        // 3. Chi tiết khóa học & Đánh giá
         public async Task<IActionResult> Details(int id)
         {
             var course = await _context.Courses
                 .Include(c => c.User)
                 .Include(c => c.Lectures)
-                .Include(c => c.Reviews)
+                .Include(c => c.Reviews).ThenInclude(r => r.User) // Load Review kèm User
                 .FirstOrDefaultAsync(c => c.CourseID == id && c.IsApproved);
 
             if (course == null) return NotFound();
-
             return View(course);
         }
 
-        // GET: /Courses/Enroll/5
-        // Trang xác nhận ĐĂNG KÝ HỌC (miễn phí hoặc trả phí)
+        // 4. Đăng ký học
         public async Task<IActionResult> Enroll(int id)
         {
+            var userId = GetCurrentUserId();
             var course = await _context.Courses.FindAsync(id);
             if (course == null) return NotFound();
 
-            var userId = GetCurrentUserId();
-
-            bool isEnrolled = await _context.Enrollments.AnyAsync(e => e.CourseID == id && e.UserId == userId);
-            if (isEnrolled)
-            {
+            if (await _context.Enrollments.AnyAsync(e => e.CourseID == id && e.UserId == userId))
                 return RedirectToAction(nameof(Watch), new { id = id });
-            }
 
-            var enrollment = new Enrollment
-            {
-                UserId = userId,
-                CourseID = id,
-                EnrollmentDate = DateTime.Now,
-                ProgressPercent = 0
-            };
+            var enrollment = new Enrollment { UserId = userId, CourseID = id, EnrollmentDate = DateTime.Now, ProgressPercent = 0 };
 
+            // Lưu thanh toán
             if (course.Price > 0)
             {
-                // TODO: Chuyển sang trang Thanh toán (hoặc giả lập)
                 var payment = new Payment
                 {
                     Enrollment = enrollment,
                     Amount = course.Price,
                     PaymentDate = DateTime.Now,
-                    PaymentMethod = "Demo",
+                    PaymentMethod = "System",
                     Status = "Completed"
                 };
                 _context.Payments.Add(payment);
-
-                // TODO: Gửi HÓA ĐƠN (Email)
             }
 
             _context.Enrollments.Add(enrollment);
@@ -145,91 +96,132 @@ namespace Elysia.Controllers
             return RedirectToAction(nameof(Watch), new { id = id });
         }
 
-        // GET: /Courses/Watch/5
-        // Trang XEM BÀI GIẢNG (Phòng học)
-        public async Task<IActionResult> Watch(int id) // id là CourseID
+        // 5. Màn hình học (Watch) & Thảo luận
+        public async Task<IActionResult> Watch(int id)
         {
             var userId = GetCurrentUserId();
-            bool isEnrolled = await _context.Enrollments.AnyAsync(e => e.CourseID == id && e.UserId == userId);
-            if (!isEnrolled)
-            {
-                return Forbid();
-            }
+            if (!await _context.Enrollments.AnyAsync(e => e.CourseID == id && e.UserId == userId)) return Forbid();
 
-            // TODO: Lấy thông tin khóa học (include Bài giảng, Quiz)
-            var course = await _context.Courses.Include(c => c.Lectures).FirstOrDefaultAsync(c => c.CourseID == id);
+            var course = await _context.Courses
+                .Include(c => c.Lectures)
+                .ThenInclude(l => l.Discussions.OrderByDescending(d => d.CreatedAt)) // Load thảo luận
+                .ThenInclude(d => d.User)
+                .FirstOrDefaultAsync(c => c.CourseID == id);
+
             return View(course);
         }
 
-        // POST: /Courses/CompleteLecture
-        // Đánh dấu 1 bài giảng đã HOÀN THÀNH (Theo dõi tiến độ)
+        // 6. API: Đánh dấu hoàn thành bài học
         [HttpPost]
         public async Task<IActionResult> CompleteLecture(int lectureId, int courseId)
         {
             var userId = GetCurrentUserId();
 
-            // TODO: Thêm record vào bảng LectureCompletions (UserId, LectureId)
-            // Tính toán lại ProgressPercent cho Enrollment
+            // Kiểm tra đã hoàn thành chưa
+            if (!await _context.LectureCompletions.AnyAsync(lc => lc.LectureID == lectureId && lc.UserId == userId))
+            {
+                _context.LectureCompletions.Add(new LectureCompletion { UserId = userId, LectureID = lectureId, CompletionDate = DateTime.Now });
+                await _context.SaveChangesAsync();
 
-            return Json(new { success = true, progress = 50.5 });
+                // Tính lại %
+                var total = await _context.Lectures.CountAsync(l => l.CourseID == courseId);
+                var completed = await _context.LectureCompletions
+                    .CountAsync(lc => lc.UserId == userId && _context.Lectures.Any(l => l.LectureID == lc.LectureID && l.CourseID == courseId));
+
+                var enrollment = await _context.Enrollments.FirstOrDefaultAsync(e => e.CourseID == courseId && e.UserId == userId);
+                if (enrollment != null && total > 0)
+                {
+                    enrollment.ProgressPercent = Math.Round(((decimal)completed / total) * 100, 2);
+                    await _context.SaveChangesAsync();
+                    return Json(new { success = true, progress = enrollment.ProgressPercent });
+                }
+            }
+            return Json(new { success = true });
         }
 
-        // GET: /Courses/DoQuiz/5
-        // Trang LÀM QUIZ (quizId)
-        public async Task<IActionResult> DoQuiz(int quizId)
-        {
-            // TODO: Lấy Quiz (include Câu hỏi, Câu trả lời)
-            return View();
-        }
-
-        // POST: /Courses/SubmitQuiz/5
-        // Xử lý NỘP BÀI Quiz
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SubmitQuiz(int quizId, IFormCollection form)
-        {
-            // TODO: Lấy các câu trả lời của user từ 'form'
-            // So sánh với đáp án đúng, Tính điểm
-
-            var score = 90; // Giả lập điểm
-
-            // --- LỖI 3: ĐÃ SỬA (thay '...' bằng 'score') ---
-            return RedirectToAction("QuizResult", new { quizId = quizId, score = score });
-        }
-
-        // GET: /Courses/QuizResult
-        // Trang KẾT QUẢ Quiz
-        public IActionResult QuizResult(int quizId, int score)
-        {
-            ViewBag.Score = score;
-            return View();
-        }
-
-        // POST: /Courses/AddReview
-        // Thêm ĐÁNH GIÁ (sao + bình luận)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddReview(int courseId, int rating, string comment)
-        {
-            // TODO: Tạo Review mới, lưu vào CSDL
-            return RedirectToAction(nameof(Details), new { id = courseId });
-        }
-
-        // POST: /Courses/AddDiscussionComment
-        // Thêm bình luận (FORUM)
+        // 7. Gửi thảo luận
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddDiscussionComment(int lectureId, string commentText)
         {
-            // TODO: Tạo Discussion mới, lưu vào CSDL
-
-            // --- LỖI 3: ĐÃ SỬA (thay '...' bằng logic lấy CourseID) ---
             var lecture = await _context.Lectures.FindAsync(lectureId);
-            if (lecture == null)
+            if (lecture != null && !string.IsNullOrWhiteSpace(commentText))
             {
-                return NotFound();
+                _context.Discussions.Add(new Discussion
+                {
+                    LectureID = lectureId,
+                    UserId = GetCurrentUserId(),
+                    Content = commentText,
+                    CreatedAt = DateTime.Now
+                });
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Watch), new { id = lecture.CourseID });
             }
-            return RedirectToAction(nameof(Watch), new { id = lecture.CourseID });
+            return BadRequest();
+        }
+
+        // 8. Gửi đánh giá (Review)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReview(int courseId, int rating, string comment)
+        {
+            var userId = GetCurrentUserId();
+            if (await _context.Enrollments.AnyAsync(e => e.CourseID == courseId && e.UserId == userId))
+            {
+                _context.Reviews.Add(new Review
+                {
+                    CourseID = courseId,
+                    UserId = userId,
+                    Rating = rating,
+                    Comment = comment,
+                    CreatedAt = DateTime.Now
+                });
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Details), new { id = courseId });
+        }
+
+        // 9. LÀM QUIZ (Game trắc nghiệm)
+        public async Task<IActionResult> DoQuiz(int lectureId)
+        {
+            var quiz = await _context.Quizzes
+                .Include(q => q.Questions).ThenInclude(qn => qn.Answers)
+                .FirstOrDefaultAsync(q => q.LectureID == lectureId);
+
+            if (quiz == null) return NotFound("Chưa có bài tập cho bài giảng này.");
+            return View(quiz);
+        }
+
+        // 10. NỘP QUIZ & TÍNH ĐIỂM THẬT
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitQuiz(int quizId, Dictionary<int, int> answers)
+        {
+            var quiz = await _context.Quizzes
+                .Include(q => q.Questions).ThenInclude(qn => qn.Answers)
+                .FirstOrDefaultAsync(q => q.QuizID == quizId);
+
+            if (quiz == null) return NotFound();
+
+            int correctCount = 0;
+            int totalQuestions = quiz.Questions.Count;
+
+            foreach (var question in quiz.Questions)
+            {
+                // Kiểm tra xem sinh viên có chọn đáp án cho câu này không
+                if (answers.ContainsKey(question.QuestionID))
+                {
+                    int selectedAnswerId = answers[question.QuestionID];
+                    // Kiểm tra đáp án đúng trong Database
+                    bool isCorrect = question.Answers.Any(a => a.AnswerID == selectedAnswerId && a.IsCorrect);
+                    if (isCorrect) correctCount++;
+                }
+            }
+
+            // Tính điểm thang 100
+            double score = totalQuestions == 0 ? 0 : ((double)correctCount / totalQuestions) * 100;
+
+            return View("QuizResult", new { Score = (int)score, Correct = correctCount, Total = totalQuestions, QuizId = quizId, CourseId = quiz.Questions.FirstOrDefault()?.Quiz?.Lecture?.CourseID });
         }
     }
 }

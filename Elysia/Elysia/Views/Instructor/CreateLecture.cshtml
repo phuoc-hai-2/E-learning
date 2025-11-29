@@ -1,0 +1,57 @@
+﻿@model Elysia.Models.Lecture
+
+@{
+    ViewData["Title"] = "Thêm Bài Giảng Mới";
+}
+
+<div class="row justify-content-center pt-4">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-camera-video"></i> Thêm Bài Giảng Mới</h4>
+            </div>
+            <div class="card-body">
+                @* Form gửi đến Action AddLecture *@
+                <form asp-action="AddLecture" enctype="multipart/form-data" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    @* Hidden CourseID *@
+                    <input type="hidden" asp-for="CourseID" />
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-bold">Tiêu đề bài giảng</label>
+                        <input asp-for="Title" class="form-control" placeholder="Nhập tên bài giảng..." />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Order" class="form-label fw-bold">Thứ tự hiển thị</label>
+                        <input asp-for="Order" class="form-control" type="number" min="1" value="1" />
+                        <span asp-validation-for="Order" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Video bài giảng</label>
+                        <input type="file" name="videoFile" class="form-control" accept="video/*" />
+                        <small class="text-muted">Hỗ trợ định dạng .mp4, .mkv (Tối đa 100MB tùy cấu hình server)</small>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="ManageCourse" asp-route-id="@Model.CourseID" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Quay lại
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-save"></i> Lưu Bài Giảng
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -167,13 +167,13 @@ namespace Elysia.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DiscussionID"));
 
-                    b.Property<DateTime>("CommentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CommentText")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("LectureID")
                         .HasColumnType("int");
@@ -261,7 +261,7 @@ namespace Elysia.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CompletionID"));
 
-                    b.Property<DateTime>("CompletedDate")
+                    b.Property<DateTime>("CompletionDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("LectureID")
@@ -278,6 +278,39 @@ namespace Elysia.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("LectureCompletions");
+                });
+
+            modelBuilder.Entity("Elysia.Models.Notification", b =>
+                {
+                    b.Property<int>("NotificationID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationID"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("NotificationID");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Elysia.Models.Payment", b =>
@@ -376,11 +409,11 @@ namespace Elysia.Migrations
                     b.Property<int>("CourseID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("Rating")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("ReviewDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -553,7 +586,7 @@ namespace Elysia.Migrations
             modelBuilder.Entity("Elysia.Models.Discussion", b =>
                 {
                     b.HasOne("Elysia.Models.Lecture", "Lecture")
-                        .WithMany()
+                        .WithMany("Discussions")
                         .HasForeignKey("LectureID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -614,6 +647,17 @@ namespace Elysia.Migrations
                         .IsRequired();
 
                     b.Navigation("Lecture");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Elysia.Models.Notification", b =>
+                {
+                    b.HasOne("Elysia.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -741,6 +785,8 @@ namespace Elysia.Migrations
 
             modelBuilder.Entity("Elysia.Models.Lecture", b =>
                 {
+                    b.Navigation("Discussions");
+
                     b.Navigation("Quiz")
                         .IsRequired();
                 });

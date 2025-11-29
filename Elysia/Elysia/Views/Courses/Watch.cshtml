@@ -1,79 +1,98 @@
-﻿@model Elysia.Models.Lecture
-@* Giả định Model là một đối tượng Lecture *@
-
+﻿@model Elysia.Models.Course
 @{
-    ViewData["Title"] = Model.Title;
+    ViewData["Title"] = Model.Title; var firstLecture = Model.Lectures.OrderBy(l => l.Order).FirstOrDefault();
 }
 
-<div class="row pt-4">
-
-    @* === Cột 1: Video và Nội dung Bài giảng (Lớn hơn) === *@
-    <div class="col-lg-8">
-        <div class="card shadow-sm mb-4">
-            <div class="card-body p-0">
-                @* Phần hiển thị Video/Tài liệu chính *@
-                @if (!string.IsNullOrEmpty(Model.VideoUrl))
+<div class="container-fluid py-3">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ratio ratio-16x9 bg-dark mb-3 rounded shadow">
+                @if (firstLecture != null && !string.IsNullOrEmpty(firstLecture.VideoUrl))
                 {
-                    @* Thêm responsive embed cho video (ví dụ: YouTube) *@
-                    <div class="ratio ratio-16x9">
-                        <iframe src="@Model.VideoUrl" title="Video Lecture" allowfullscreen></iframe>
-                    </div>
+                    <video controls class="rounded">
+                        <source src="@firstLecture.VideoUrl" type="video/mp4">
+                        Trình duyệt không hỗ trợ thẻ video.
+                    </video>
                 }
                 else
                 {
-                    <div class="alert alert-warning m-3" role="alert">Không có video cho bài giảng này.</div>
+                    <div class="d-flex align-items-center justify-content-center text-white h-100">Chọn bài học để bắt đầu</div>
                 }
             </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-bold mb-0">@(firstLecture?.Title ?? "Giới thiệu")</h3>
+                @if (firstLecture != null)
+                {
+                    <div>
+                        <button class="btn btn-outline-success me-2" onclick="markComplete(@firstLecture.LectureID, @Model.CourseID)">
+                            <i class="fas fa-check-circle"></i> Hoàn thành bài
+                        </button>
+                        <a asp-action="DoQuiz" asp-route-lectureId="@firstLecture.LectureID" class="btn btn-warning fw-bold text-dark">
+                            <i class="fas fa-gamepad"></i> Làm bài tập
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <hr />
+
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-white fw-bold"><i class="fas fa-comments text-primary"></i> Thảo luận & Hỏi đáp</div>
+                <div class="card-body">
+                    @if (firstLecture != null)
+                    {
+                        <form asp-action="AddDiscussionComment" method="post" class="mb-4">
+                            <input type="hidden" name="lectureId" value="@firstLecture.LectureID" />
+                            <div class="input-group">
+                                <input name="commentText" class="form-control" placeholder="Bạn có thắc mắc gì không?" required />
+                                <button class="btn btn-primary"><i class="fas fa-paper-plane"></i> Gửi</button>
+                            </div>
+                        </form>
+                        <div class="vstack gap-3" style="max-height: 500px; overflow-y: auto;">
+                            @foreach (var c in firstLecture.Discussions)
+                            {
+                                <div class="d-flex border-bottom pb-2">
+                                    <div class="flex-shrink-0">
+                                        <img src="/images/default-avatar.png" class="rounded-circle" width="40">
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <div class="d-flex justify-content-between">
+                                            <h6 class="fw-bold mb-0">@c.User?.FullName</h6>
+                                            <small class="text-muted">@c.CreatedAt.ToString("dd/MM HH:mm")</small>
+                                        </div>
+                                        <p class="mb-0 text-dark">@c.Content</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
 
-        @* Tiêu đề và Mô tả/Content *@
-        <h1 class="h3 mb-3">@Model.Title</h1>
-        <div class="p-3 bg-light rounded-3 mb-4">
-            @Html.Raw(Model.Content) @* Hiển thị nội dung text/HTML *@
-        </div>
-
-        @* Nút Hoàn thành và Chuyển Bài *@
-        <div class="d-flex justify-content-between mb-4">
-            <a asp-action="Watch" asp-route-lectureId="prev" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Bài trước
-            </a>
-            <button class="btn btn-success btn-lg">
-                <i class="bi bi-check-circle-fill"></i> Đánh dấu đã hoàn thành
-            </button>
-            <a asp-action="Watch" asp-route-lectureId="next" class="btn btn-outline-secondary">
-                Bài tiếp theo <i class="bi bi-arrow-right"></i>
-            </a>
-        </div>
-
-        @* Khu vực Thảo luận (Discussion) *@
-        @* (Cần Partial View riêng cho form và danh sách thảo luận) *@
-        <div class="mt-5">
-            <h2 class="h4 border-bottom pb-2 mb-3">Thảo luận</h2>
-            @* @await Html.PartialAsync("_DiscussionSection", Model.LectureID) *@
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white fw-bold">Nội dung khóa học</div>
+                <div class="list-group list-group-flush overflow-auto" style="max-height: 80vh;">
+                    @foreach (var l in Model.Lectures.OrderBy(x => x.Order))
+                    {
+                        <a href="#" class="list-group-item list-group-item-action @(l.LectureID == firstLecture?.LectureID ? "active" : "")">
+                            <div class="d-flex w-100 justify-content-between">
+                                <span class="mb-1"><i class="fas fa-play-circle me-2"></i> @l.Title</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
         </div>
     </div>
-
-    @* === Cột 2: Mục lục Khóa học (Nhỏ hơn) === *@
-    <div class="col-lg-4">
-        <div class="card shadow-sm sticky-top" style="top: 15px;">
-            <div class="card-header bg-primary text-white h6">
-                <i class="bi bi-list-task"></i> Nội dung Khóa học
-            </div>
-            <div class="list-group list-group-flush">
-                @* Vòng lặp để hiển thị các bài giảng (cần truyền danh sách Lectures từ Controller) *@
-                @* Ví dụ: @foreach (var lecture in ViewBag.CourseLectures) *@
-                <a href="#" class="list-group-item list-group-item-action active">
-                    <i class="bi bi-play-circle-fill"></i> @Model.Title
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                    <i class="bi bi-lock-fill"></i> Bài 2: Các khái niệm cơ bản
-                </a>
-            </div>
-        </div>
-    </div>
-
 </div>
 
-@section Scripts {
-    @* Thêm script cho nút "Đã hoàn thành" (dùng AJAX) *@
-}
+<script>
+    function markComplete(lid, cid) {
+        $.post('/Courses/CompleteLecture', { lectureId: lid, courseId: cid }, function(res) {
+            if(res.success) alert("Đã cập nhật tiến độ học tập: " + res.progress + "%");
+        });
+    }
+</script>

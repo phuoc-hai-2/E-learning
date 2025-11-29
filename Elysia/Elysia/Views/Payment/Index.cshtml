@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Elysia.Models.Payment>
+@{
+    ViewData["Title"] = "Lịch sử thanh toán";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 fw-bold"><i class="fas fa-history text-success"></i> Lịch sử giao dịch</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-light text-center shadow-sm">Bạn chưa có giao dịch nào.</div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm">
+            <table class="table table-hover mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Mã GD</th>
+                        <th>Khóa học</th>
+                        <th>Số tiền</th>
+                        <th>Ngày thanh toán</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 text-muted">#@item.PaymentID</td>
+                            <td class="fw-bold">@(item.Enrollment?.Course?.Title ?? "Không xác định")</td>
+                            <td class="text-danger fw-bold">@item.Amount.ToString("N0") đ</td>
+                            <td>@item.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td><span class="badge bg-success">@item.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
