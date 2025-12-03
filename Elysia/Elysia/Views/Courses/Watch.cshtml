@@ -5,65 +5,83 @@
 
 <div class="container-fluid py-3">
     <div class="row">
-        <div class="col-lg-8">
-            <div class="ratio ratio-16x9 bg-dark mb-3 rounded shadow">
+        <!-- Main Video Area -->
+        <div class="col-lg-9">
+            <div class="bg-black rounded shadow mb-3 ratio ratio-16x9 position-relative">
                 @if (firstLecture != null && !string.IsNullOrEmpty(firstLecture.VideoUrl))
                 {
-                    <video controls class="rounded">
+                    <video controls class="rounded w-100 h-100" controlsList="nodownload">
                         <source src="@firstLecture.VideoUrl" type="video/mp4">
                         Trình duyệt không hỗ trợ thẻ video.
                     </video>
                 }
                 else
                 {
-                    <div class="d-flex align-items-center justify-content-center text-white h-100">Chọn bài học để bắt đầu</div>
+                    <div class="d-flex align-items-center justify-content-center text-white h-100">
+                        <div class="text-center">
+                            <i class="fas fa-play-circle fa-4x mb-3 opacity-50"></i>
+                            <h4>Chọn một bài học bên phải để bắt đầu</h4>
+                        </div>
+                    </div>
                 }
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="fw-bold mb-0">@(firstLecture?.Title ?? "Giới thiệu")</h3>
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded shadow-sm">
+                <h4 class="fw-bold mb-0 text-primary">@(firstLecture?.Title ?? "Giới thiệu")</h4>
                 @if (firstLecture != null)
                 {
                     <div>
-                        <button class="btn btn-outline-success me-2" onclick="markComplete(@firstLecture.LectureID, @Model.CourseID)">
-                            <i class="fas fa-check-circle"></i> Hoàn thành bài
+                        <button class="btn btn-outline-success me-2 fw-bold" onclick="markComplete(@firstLecture.LectureID, @Model.CourseID)">
+                            <i class="fas fa-check-circle me-1"></i> Hoàn thành
                         </button>
-                        <a asp-action="DoQuiz" asp-route-lectureId="@firstLecture.LectureID" class="btn btn-warning fw-bold text-dark">
-                            <i class="fas fa-gamepad"></i> Làm bài tập
+                        <a asp-action="DoQuiz" asp-route-lectureId="@firstLecture.LectureID" class="btn btn-warning fw-bold text-dark shadow-sm">
+                            <i class="fas fa-gamepad me-1"></i> Làm bài tập
                         </a>
                     </div>
                 }
             </div>
 
-            <hr />
-
-            <div class="card border-0 shadow-sm mt-4">
-                <div class="card-header bg-white fw-bold"><i class="fas fa-comments text-primary"></i> Thảo luận & Hỏi đáp</div>
+            <!-- Q&A / Discussion -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light fw-bold border-0 py-3">
+                    <i class="fas fa-comments text-primary me-2"></i> Thảo luận & Hỏi đáp
+                </div>
                 <div class="card-body">
                     @if (firstLecture != null)
                     {
-                        <form asp-action="AddDiscussionComment" method="post" class="mb-4">
+                        <form asp-action="AddDiscussionComment" method="post" class="mb-4 d-flex gap-2">
                             <input type="hidden" name="lectureId" value="@firstLecture.LectureID" />
-                            <div class="input-group">
-                                <input name="commentText" class="form-control" placeholder="Bạn có thắc mắc gì không?" required />
-                                <button class="btn btn-primary"><i class="fas fa-paper-plane"></i> Gửi</button>
+                            <img src="/images/default-avatar.png" class="rounded-circle border" width="40" height="40">
+                            <div class="flex-grow-1">
+                                <div class="input-group">
+                                    <input name="commentText" class="form-control bg-light" placeholder="Bạn có thắc mắc gì về bài học này?" required />
+                                    <button class="btn btn-primary px-4"><i class="fas fa-paper-plane"></i></button>
+                                </div>
                             </div>
                         </form>
-                        <div class="vstack gap-3" style="max-height: 500px; overflow-y: auto;">
-                            @foreach (var c in firstLecture.Discussions)
+
+                        <div class="vstack gap-3" style="max-height: 600px; overflow-y: auto;">
+                            @if (firstLecture.Discussions != null && firstLecture.Discussions.Any())
                             {
-                                <div class="d-flex border-bottom pb-2">
-                                    <div class="flex-shrink-0">
-                                        <img src="/images/default-avatar.png" class="rounded-circle" width="40">
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <div class="d-flex justify-content-between">
-                                            <h6 class="fw-bold mb-0">@c.User?.FullName</h6>
-                                            <small class="text-muted">@c.CreatedAt.ToString("dd/MM HH:mm")</small>
+                                @foreach (var c in firstLecture.Discussions)
+                                {
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <img src="/images/default-avatar.png" class="rounded-circle border" width="40" height="40">
                                         </div>
-                                        <p class="mb-0 text-dark">@c.Content</p>
+                                        <div class="flex-grow-1 ms-3 p-3 bg-light rounded-3">
+                                            <div class="d-flex justify-content-between mb-1">
+                                                <h6 class="fw-bold mb-0 text-dark">@c.User?.FullName</h6>
+                                                <small class="text-muted" style="font-size: 0.75rem;">@c.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                                            </div>
+                                            <p class="mb-0 text-secondary" style="font-size: 0.95rem;">@c.Content</p>
+                                        </div>
                                     </div>
-                                </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted text-center my-3 small">Chưa có thảo luận nào.</p>
                             }
                         </div>
                     }
@@ -71,16 +89,23 @@
             </div>
         </div>
 
-        <div class="col-lg-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-primary text-white fw-bold">Nội dung khóa học</div>
-                <div class="list-group list-group-flush overflow-auto" style="max-height: 80vh;">
+        <!-- Sidebar Playlist -->
+        <div class="col-lg-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-primary text-white fw-bold py-3">
+                    <i class="fas fa-list-ol me-2"></i> Nội dung khóa học
+                </div>
+                <div class="list-group list-group-flush overflow-auto custom-scrollbar" style="max-height: 85vh;">
                     @foreach (var l in Model.Lectures.OrderBy(x => x.Order))
                     {
-                        <a href="#" class="list-group-item list-group-item-action @(l.LectureID == firstLecture?.LectureID ? "active" : "")">
-                            <div class="d-flex w-100 justify-content-between">
-                                <span class="mb-1"><i class="fas fa-play-circle me-2"></i> @l.Title</span>
+                        <a href="#" class="list-group-item list-group-item-action border-bottom @(l.LectureID == firstLecture?.LectureID ? "active fw-bold" : "")" style="padding: 15px;">
+                            <div class="d-flex w-100">
+                                <span class="me-2 opacity-50">@l.Order.</span>
+                                <span>@l.Title</span>
                             </div>
+                            <small class="d-block mt-1 opacity-75">
+                                <i class="far fa-clock me-1"></i> Video
+                            </small>
                         </a>
                     }
                 </div>
@@ -92,7 +117,22 @@
 <script>
     function markComplete(lid, cid) {
         $.post('/Courses/CompleteLecture', { lectureId: lid, courseId: cid }, function(res) {
-            if(res.success) alert("Đã cập nhật tiến độ học tập: " + res.progress + "%");
+            if(res.success) {
+                // Use Bootstrap Toast or simple alert
+                alert("✅ Đã cập nhật tiến độ học tập: " + res.progress + "%");
+            }
         });
     }
 </script>
+
+<style>
+    /* Custom scrollbar for playlist */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.2);
+        border-radius: 10px;
+    }
+</style>

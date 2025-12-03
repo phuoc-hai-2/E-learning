@@ -4,51 +4,94 @@
 }
 
 <div class="container py-4">
-    <a asp-action="MyCourses" class="text-decoration-none text-muted mb-3 d-inline-block"><i class="fas fa-arrow-left"></i> Quay lại danh sách</a>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-0">@Model.Title</h2>
-            <p class="text-muted small">Quản lý các bài giảng và bài tập</p>
+    <!-- Header -->
+    <div class="mb-4">
+        <a asp-action="MyCourses" class="text-decoration-none text-muted mb-2 d-inline-block small"><i class="fas fa-arrow-left"></i> Quay lại danh sách</a>
+        <div class="d-flex justify-content-between align-items-end">
+            <div>
+                <h2 class="fw-bold mb-0 text-dark">@Model.Title</h2>
+                <p class="text-muted small mb-0 mt-1">Quản lý các bài giảng và bài tập cho khóa học này</p>
+            </div>
+            <div>
+                <a asp-action="EditCourse" asp-route-id="@Model.CourseID" class="btn btn-outline-secondary me-2">
+                    <i class="fas fa-cog"></i> Cài đặt khóa học
+                </a>
+                <a asp-action="CreateLecture" asp-route-courseId="@Model.CourseID" class="btn btn-primary shadow-sm">
+                    <i class="fas fa-plus-circle"></i> Thêm bài giảng
+                </a>
+            </div>
         </div>
-        <a asp-action="CreateLecture" asp-route-courseId="@Model.CourseID" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Thêm bài giảng</a>
     </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white fw-bold">Danh sách bài giảng</div>
-        <div class="list-group list-group-flush">
-            @if (!Model.Lectures.Any())
-            {
-                <div class="p-4 text-center text-muted">Chưa có bài giảng nào.</div>
-            }
-            else
-            {
-                @foreach (var l in Model.Lectures.OrderBy(x => x.Order))
-                {
-                    <div class="list-group-item p-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <span class="badge bg-secondary me-3">#@l.Order</span>
-                                <div>
-                                    <h6 class="mb-0 fw-bold">@l.Title</h6>
-                                    <small class="text-muted">Video: @(string.IsNullOrEmpty(l.VideoUrl) ? "Chưa có" : "Đã tải lên")</small>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold m-0 text-primary"><i class="fas fa-list-ul me-2"></i> Danh sách bài giảng (@Model.Lectures.Count)</h6>
+                </div>
+                <div class="list-group list-group-flush">
+                    @if (!Model.Lectures.Any())
+                    {
+                        <div class="p-5 text-center text-muted">
+                            <i class="fas fa-film fa-3x mb-3 opacity-25"></i>
+                            <p>Chưa có bài giảng nào được thêm vào.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var l in Model.Lectures.OrderBy(x => x.Order))
+                        {
+                            <div class="list-group-item p-3 d-flex align-items-center justify-content-between hover-shadow">
+                                <div class="d-flex align-items-center flex-grow-1">
+                                    <span class="badge bg-secondary me-3 rounded-pill px-3">#@l.Order</span>
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">@l.Title</h6>
+                                        <div class="small text-muted">
+                                            <i class="fas fa-video me-1"></i> @(string.IsNullOrEmpty(l.VideoUrl) ? "Chưa có video" : "Video sẵn sàng")
+                                            <span class="mx-2">|</span>
+                                            <i class="fas fa-comments me-1"></i> @(l.Discussions?.Count ?? 0) thảo luận
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="btn-group">
+                                    <a asp-action="ManageQuiz" asp-route-lectureId="@l.LectureID" class="btn btn-sm btn-outline-warning" title="Tạo bài tập trắc nghiệm">
+                                        <i class="fas fa-question-circle"></i> Quiz
+                                    </a>
+                                    <a asp-action="EditLecture" asp-route-lectureId="@l.LectureID" class="btn btn-sm btn-outline-primary" title="Sửa bài giảng">
+                                        <i class="fas fa-edit"></i> Sửa
+                                    </a>
+                                    <form asp-action="DeleteLecture" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn XÓA bài giảng này không? Hành động này không thể hoàn tác.');">
+                                        <input type="hidden" name="lectureId" value="@l.LectureID" />
+                                        <button class="btn btn-sm btn-outline-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                                    </form>
                                 </div>
                             </div>
-                            <div>
-                                <a asp-action="ManageQuiz" asp-route-lectureId="@l.LectureID" class="btn btn-sm btn-outline-warning me-2">
-                                    <i class="fas fa-question-circle"></i> Quiz
-                                </a>
-                                <a asp-action="EditLecture" asp-route-lectureId="@l.LectureID" class="btn btn-sm btn-outline-primary me-2">
-                                    <i class="fas fa-edit"></i> Sửa
-                                </a>
-                                <form asp-action="DeleteLecture" method="post" class="d-inline" onsubmit="return confirm('Xóa bài giảng này?');">
-                                    <input type="hidden" name="lectureId" value="@l.LectureID" />
-                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Học viên Stats -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3 text-muted text-uppercase small">Học viên đã đăng ký</h6>
+                    <h2 class="display-5 fw-bold text-success mb-0">@Model.Enrollments.Count</h2>
+                    <small class="text-muted">người học</small>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card shadow-sm border-0 bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold"><i class="fas fa-info-circle"></i> Lưu ý</h5>
+                    <p class="card-text small opacity-75">
+                        Khi bạn thêm một bài giảng mới, tất cả học viên đã đăng ký khóa học này sẽ nhận được thông báo tự động qua Chuông và Email.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

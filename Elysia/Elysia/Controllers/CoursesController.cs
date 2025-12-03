@@ -2,6 +2,7 @@
 using Elysia.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -13,11 +14,13 @@ namespace Elysia.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailSender _emailSender;
 
-        public CoursesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public CoursesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender)
         {
             _context = context;
             _userManager = userManager;
+            _emailSender = emailSender;
         }
 
         private string GetCurrentUserId() => User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -57,14 +60,14 @@ namespace Elysia.Controllers
             var course = await _context.Courses
                 .Include(c => c.User)
                 .Include(c => c.Lectures)
-                .Include(c => c.Reviews).ThenInclude(r => r.User) // Load Review kèm User
+                .Include(c => c.Reviews).ThenInclude(r => r.User)
                 .FirstOrDefaultAsync(c => c.CourseID == id && c.IsApproved);
 
             if (course == null) return NotFound();
             return View(course);
         }
 
-        // 4. Đăng ký học
+        // 4. Xử lý Đăng ký & Thanh toán
         public async Task<IActionResult> Enroll(int id)
         {
             var userId = GetCurrentUserId();
@@ -74,9 +77,14 @@ namespace Elysia.Controllers
             if (await _context.Enrollments.AnyAsync(e => e.CourseID == id && e.UserId == userId))
                 return RedirectToAction(nameof(Watch), new { id = id });
 
-            var enrollment = new Enrollment { UserId = userId, CourseID = id, EnrollmentDate = DateTime.Now, ProgressPercent = 0 };
+            var enrollment = new Enrollment
+            {
+                UserId = userId,
+                CourseID = id,
+                EnrollmentDate = DateTime.Now,
+                ProgressPercent = 0
+            };
 
-            // Lưu thanh toán
             if (course.Price > 0)
             {
                 var payment = new Payment
@@ -84,28 +92,45 @@ namespace Elysia.Controllers
                     Enrollment = enrollment,
                     Amount = course.Price,
                     PaymentDate = DateTime.Now,
-                    PaymentMethod = "System",
-                    Status = "Completed"
+                    PaymentMethod = "VnPay",
+                    Status = "Pending"
                 };
                 _context.Payments.Add(payment);
+                _context.Enrollments.Add(enrollment);
+                await _context.SaveChangesAsync();
+
+                // Gửi Email xác nhận
+                var user = await _userManager.FindByIdAsync(userId);
+                await _emailSender.SendEmailAsync(user.Email, "Xác nhận đăng ký khóa học",
+                    $"Bạn đã đăng ký khóa học <strong>{course.Title}</strong>. Vui lòng hoàn tất thanh toán để bắt đầu học.");
+
+                // Chuyển sang PaymentController để tạo URL VNPAY
+                return RedirectToAction("CreatePayment", "Payment", new { paymentId = payment.PaymentID });
             }
-
-            _context.Enrollments.Add(enrollment);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Watch), new { id = id });
+            else
+            {
+                // Nếu miễn phí, vào học luôn
+                _context.Enrollments.Add(enrollment);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Watch), new { id = id });
+            }
         }
 
         // 5. Màn hình học (Watch) & Thảo luận
         public async Task<IActionResult> Watch(int id)
         {
             var userId = GetCurrentUserId();
-            if (!await _context.Enrollments.AnyAsync(e => e.CourseID == id && e.UserId == userId)) return Forbid();
+            bool isEnrolled = await _context.Enrollments.AnyAsync(e => e.CourseID == id && e.UserId == userId);
+
+            if (!isEnrolled)
+            {
+                TempData["ErrorMessage"] = "Bạn cần đăng ký khóa học này trước khi xem.";
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
 
             var course = await _context.Courses
                 .Include(c => c.Lectures)
-                .ThenInclude(l => l.Discussions.OrderByDescending(d => d.CreatedAt)) // Load thảo luận
-                .ThenInclude(d => d.User)
+                .ThenInclude(l => l.Discussions).ThenInclude(d => d.User)
                 .FirstOrDefaultAsync(c => c.CourseID == id);
 
             return View(course);
@@ -117,13 +142,16 @@ namespace Elysia.Controllers
         {
             var userId = GetCurrentUserId();
 
-            // Kiểm tra đã hoàn thành chưa
             if (!await _context.LectureCompletions.AnyAsync(lc => lc.LectureID == lectureId && lc.UserId == userId))
             {
-                _context.LectureCompletions.Add(new LectureCompletion { UserId = userId, LectureID = lectureId, CompletionDate = DateTime.Now });
+                _context.LectureCompletions.Add(new LectureCompletion
+                {
+                    UserId = userId,
+                    LectureID = lectureId,
+                    CompletionDate = DateTime.Now
+                });
                 await _context.SaveChangesAsync();
 
-                // Tính lại %
                 var total = await _context.Lectures.CountAsync(l => l.CourseID == courseId);
                 var completed = await _context.LectureCompletions
                     .CountAsync(lc => lc.UserId == userId && _context.Lectures.Any(l => l.LectureID == lc.LectureID && l.CourseID == courseId));
@@ -133,6 +161,22 @@ namespace Elysia.Controllers
                 {
                     enrollment.ProgressPercent = Math.Round(((decimal)completed / total) * 100, 2);
                     await _context.SaveChangesAsync();
+
+                    if (enrollment.ProgressPercent >= 100)
+                    {
+                        var user = await _userManager.FindByIdAsync(userId);
+                        _context.Notifications.Add(new Notification
+                        {
+                            UserId = userId,
+                            Message = $"Chúc mừng! Bạn đã hoàn thành khóa học '{enrollment.Course.Title}'.",
+                            Url = $"/Courses/Details/{courseId}"
+                        });
+                        await _context.SaveChangesAsync();
+
+                        await _emailSender.SendEmailAsync(user.Email, "Chúc mừng hoàn thành khóa học",
+                            $"Tuyệt vời! Bạn đã hoàn thành xuất sắc khóa học <strong>{enrollment.Course.Title}</strong>.");
+                    }
+
                     return Json(new { success = true, progress = enrollment.ProgressPercent });
                 }
             }
@@ -181,24 +225,26 @@ namespace Elysia.Controllers
             return RedirectToAction(nameof(Details), new { id = courseId });
         }
 
-        // 9. LÀM QUIZ (Game trắc nghiệm)
+        // 9. LÀM QUIZ
         public async Task<IActionResult> DoQuiz(int lectureId)
         {
             var quiz = await _context.Quizzes
                 .Include(q => q.Questions).ThenInclude(qn => qn.Answers)
+                .Include(q => q.Lecture)
                 .FirstOrDefaultAsync(q => q.LectureID == lectureId);
 
             if (quiz == null) return NotFound("Chưa có bài tập cho bài giảng này.");
             return View(quiz);
         }
 
-        // 10. NỘP QUIZ & TÍNH ĐIỂM THẬT
+        // 10. NỘP QUIZ & TÍNH ĐIỂM
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitQuiz(int quizId, Dictionary<int, int> answers)
         {
             var quiz = await _context.Quizzes
                 .Include(q => q.Questions).ThenInclude(qn => qn.Answers)
+                .Include(q => q.Lecture)
                 .FirstOrDefaultAsync(q => q.QuizID == quizId);
 
             if (quiz == null) return NotFound();
@@ -208,20 +254,25 @@ namespace Elysia.Controllers
 
             foreach (var question in quiz.Questions)
             {
-                // Kiểm tra xem sinh viên có chọn đáp án cho câu này không
                 if (answers.ContainsKey(question.QuestionID))
                 {
                     int selectedAnswerId = answers[question.QuestionID];
-                    // Kiểm tra đáp án đúng trong Database
                     bool isCorrect = question.Answers.Any(a => a.AnswerID == selectedAnswerId && a.IsCorrect);
                     if (isCorrect) correctCount++;
                 }
             }
 
-            // Tính điểm thang 100
             double score = totalQuestions == 0 ? 0 : ((double)correctCount / totalQuestions) * 100;
 
-            return View("QuizResult", new { Score = (int)score, Correct = correctCount, Total = totalQuestions, QuizId = quizId, CourseId = quiz.Questions.FirstOrDefault()?.Quiz?.Lecture?.CourseID });
+            return View("QuizResult", new
+            {
+                Score = (int)score,
+                Correct = correctCount,
+                Total = totalQuestions,
+                QuizId = quizId,
+                CourseId = quiz.Lecture?.CourseID
+            });
+
         }
     }
 }

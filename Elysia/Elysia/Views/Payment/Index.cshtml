@@ -3,39 +3,59 @@
     ViewData["Title"] = "Lịch sử thanh toán";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 fw-bold"><i class="fas fa-history text-success"></i> Lịch sử giao dịch</h2>
+<div class="container mt-5">
+    <h2 class="mb-4 fw-bold text-dark"><i class="fas fa-receipt text-primary me-2"></i> Lịch sử giao dịch</h2>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-light text-center shadow-sm">Bạn chưa có giao dịch nào.</div>
+        <div class="alert alert-light text-center shadow-sm py-5 border">
+            <i class="fas fa-file-invoice-dollar fa-3x text-muted mb-3 opacity-25"></i>
+            <p class="lead text-muted">Bạn chưa thực hiện giao dịch nào.</p>
+        </div>
     }
     else
     {
         <div class="card border-0 shadow-sm">
-            <table class="table table-hover mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th class="ps-4">Mã GD</th>
-                        <th>Khóa học</th>
-                        <th>Số tiền</th>
-                        <th>Ngày thanh toán</th>
-                        <th>Trạng thái</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="bg-light text-uppercase small fw-bold text-muted">
                         <tr>
-                            <td class="ps-4 text-muted">#@item.PaymentID</td>
-                            <td class="fw-bold">@(item.Enrollment?.Course?.Title ?? "Không xác định")</td>
-                            <td class="text-danger fw-bold">@item.Amount.ToString("N0") đ</td>
-                            <td>@item.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td><span class="badge bg-success">@item.Status</span></td>
+                            <th class="ps-4 py-3">Mã GD</th>
+                            <th>Khóa học</th>
+                            <th>Số tiền</th>
+                            <th>Ngày thanh toán</th>
+                            <th>Phương thức</th>
+                            <th class="text-end pe-4">Trạng thái</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 text-muted small font-monospace">#@item.PaymentID</td>
+                                <td class="fw-bold text-dark">@(item.Enrollment?.Course?.Title ?? "Không xác định")</td>
+                                <td class="text-danger fw-bold">@item.Amount.ToString("N0") đ</td>
+                                <td class="text-muted small">@item.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td><span class="badge bg-light text-dark border">@item.PaymentMethod</span></td>
+                                <td class="text-end pe-4">
+                                    @if (item.Status == "Completed")
+                                    {
+                                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Thành công</span>
+                                    }
+                                    else if (item.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill">Đang chờ</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill">Thất bại</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     }
 </div>

@@ -1,38 +1,76 @@
 ﻿@{
     ViewData["Title"] = "Kết quả bài làm";
 }
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
-    <div class="card shadow-lg border-0 text-center p-5" style="width: 500px;">
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card shadow-lg border-0 text-center p-5" style="width: 550px; border-radius: 20px;">
         <div class="mb-4">
             @if (Model.Score >= 80)
             {
-                <i class="fas fa-trophy text-warning display-1"></i>
+                <div class="text-warning mb-3"><i class="fas fa-trophy fa-5x animate-bounce"></i></div>
+                <h3 class="text-success fw-bold">Xuất sắc!</h3>
             }
             else if (Model.Score >= 50)
             {
-
-                <i class="fas fa-thumbs-up text-primary display-1"></i>
+                <div class="text-primary mb-3"><i class="fas fa-thumbs-up fa-5x"></i></div>
+                <h3 class="text-primary fw-bold">Làm tốt lắm!</h3>
             }
             else
             {
-
-                <i class="fas fa-sad-tear text-danger display-1"></i>
+                <div class="text-danger mb-3"><i class="fas fa-book-open fa-5x"></i></div>
+                <h3 class="text-danger fw-bold">Cần cố gắng hơn!</h3>
             }
         </div>
-        <h2 class="fw-bold">Điểm số của bạn</h2>
-        <h1 class="display-2 fw-bold @(Model.Score >= 50 ? "text-success" : "text-danger")">@Model.Score<span class="fs-4 text-muted">/100</span></h1>
 
-        <p class="lead mt-3">
-            Bạn trả lời đúng <strong class="text-dark">@Model.Correct</strong> trên tổng số <strong class="text-dark">@Model.Total</strong> câu hỏi.
-        </p>
+        <div class="bg-light rounded-3 p-4 mb-4">
+            <h6 class="text-muted text-uppercase small ls-1">Tổng điểm của bạn</h6>
+            <h1 class="display-2 fw-bold @(Model.Score >= 50 ? "text-success" : "text-danger") mb-0">
+                @Model.Score<span class="fs-4 text-muted fw-normal">/100</span>
+            </h1>
+        </div>
 
-        <div class="d-grid gap-2 mt-4">
-            <a asp-action="DoQuiz" asp-route-lectureId="@ViewBag.CourseId" class="btn btn-outline-primary">
-                <i class="fas fa-redo"></i> Làm lại
+        <div class="row g-2 mb-4">
+            <div class="col-6">
+                <div class="p-3 border rounded bg-white">
+                    <small class="d-block text-muted">Số câu đúng</small>
+                    <strong class="text-success fs-5">@Model.Correct</strong>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="p-3 border rounded bg-white">
+                    <small class="d-block text-muted">Tổng số câu</small>
+                    <strong class="text-dark fs-5">@Model.Total</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <a asp-action="DoQuiz" asp-route-lectureId="@Model.CourseId" class="btn btn-outline-primary py-2 fw-bold">
+                <i class="fas fa-redo me-2"></i> Làm lại bài
             </a>
-            <a asp-action="Index" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Quay lại khóa học
+            <a asp-action="Watch" asp-route-id="@Model.CourseId" class="btn btn-secondary py-2 fw-bold">
+                <i class="fas fa-arrow-left me-2"></i> Quay lại bài học
             </a>
         </div>
     </div>
 </div>
+
+<style>
+    .animate-bounce {
+        animation: bounce 2s infinite;
+    }
+
+    @@keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+
+        40% {
+            transform: translateY(-20px);
+        }
+
+        60% {
+            transform: translateY(-10px);
+        }
+    }
+</style>

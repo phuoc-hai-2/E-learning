@@ -142,5 +142,33 @@ namespace Elysia.Controllers
             // Quay lại trang quản lý toàn bộ
             return RedirectToAction(nameof(ManageCourses));
         }
+        // POST: /Admin/LockUser
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LockUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                // Khóa tài khoản vĩnh viễn (hoặc 100 năm)
+                await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(100));
+                await _userManager.SetLockoutEnabledAsync(user, true); // Đảm bảo tính năng lock được bật
+            }
+            return RedirectToAction(nameof(ManageUsers));
+        }
+
+        // POST: /Admin/UnlockUser
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnlockUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user != null)
+            {
+                // Mở khóa ngay lập tức
+                await _userManager.SetLockoutEndDateAsync(user, null);
+            }
+            return RedirectToAction(nameof(ManageUsers));
+        }
     }
 }

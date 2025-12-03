@@ -4,10 +4,10 @@
 }
 
 <div class="container mt-5" style="max-width: 800px;">
-    <div class="card shadow-lg border-0">
-        <div class="card-header bg-gradient bg-primary text-white text-center py-4 rounded-top">
-            <h2 class="fw-bold mb-0"><i class="fas fa-puzzle-piece"></i> @Model.Title</h2>
-            <p class="mb-0 opacity-75">Chọn đáp án đúng nhất cho mỗi câu hỏi</p>
+    <div class="card shadow-lg border-0 overflow-hidden">
+        <div class="card-header bg-gradient bg-primary text-white text-center py-4">
+            <h2 class="fw-bold mb-0"><i class="fas fa-puzzle-piece me-2"></i> @Model.Title</h2>
+            <p class="mb-0 opacity-75 mt-1">Chọn đáp án đúng nhất cho mỗi câu hỏi</p>
         </div>
         <div class="card-body p-5 bg-light">
             <form asp-action="SubmitQuiz" method="post">
@@ -15,22 +15,30 @@
 
                 @if (!Model.Questions.Any())
                 {
-                    <div class="alert alert-warning text-center">Chưa có câu hỏi nào.</div>
+                    <div class="alert alert-warning text-center py-4">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-3 d-block"></i>
+                        Chưa có câu hỏi nào được thêm vào bài tập này.
+                    </div>
+                    <div class="text-center">
+                        <a href="javascript:history.back()" class="btn btn-secondary">Quay lại</a>
+                    </div>
                 }
                 else
                 {
                     int i = 1;
                     foreach (var q in Model.Questions)
                     {
-                        <div class="card mb-4 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <h5 class="fw-bold text-dark mb-3"><span class="badge bg-secondary me-2">Câu @i</span> @q.QuestionText</h5>
+                        <div class="card mb-4 border-0 shadow-sm position-relative overflow-hidden">
+                            <div class="position-absolute top-0 start-0 bg-secondary text-white px-3 py-1 rounded-bottom-end small fw-bold">Câu @i</div>
+                            <div class="card-body p-4 pt-5">
+                                <h5 class="fw-bold text-dark mb-3">@q.QuestionText</h5>
                                 <div class="vstack gap-2">
                                     @foreach (var ans in q.Answers)
                                     {
-                                        <label class="btn btn-outline-dark text-start p-3 rounded-3 border-2 position-relative">
+                                        <label class="btn btn-outline-dark text-start p-3 rounded-3 border border-2 position-relative d-flex align-items-center selection-label">
                                             <input type="radio" name="answers[@q.QuestionID]" value="@ans.AnswerID" class="btn-check" required>
-                                            <span class="fw-semibold">@ans.AnswerText</span>
+                                            <span class="fw-semibold flex-grow-1">@ans.AnswerText</span>
+                                            <i class="fas fa-check-circle check-mark text-primary fs-4 d-none"></i>
                                         </label>
                                     }
                                 </div>
@@ -38,8 +46,8 @@
                         </div>
                         i++;
                     }
-                    <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-success btn-lg px-5 py-3 rounded-pill fw-bold shadow">
+                    <div class="text-center mt-5">
+                        <button type="submit" class="btn btn-success btn-lg px-5 py-3 rounded-pill fw-bold shadow hover-scale">
                             <i class="fas fa-paper-plane me-2"></i> Nộp bài & Xem điểm
                         </button>
                     </div>
@@ -48,14 +56,24 @@
         </div>
     </div>
 </div>
+
 <style>
     .btn-check:checked + span {
-        color: white;
+        color: #0d6efd;
     }
 
+        .btn-check:checked + span + .check-mark {
+            display: block !important;
+        }
+
     .btn-outline-dark:has(:checked) {
-        background-color: #0d6efd;
+        background-color: #e7f1ff;
         border-color: #0d6efd;
-        color: white;
+        color: #000;
+    }
+
+    .hover-scale:hover {
+        transform: scale(1.02);
+        transition: 0.2s;
     }
 </style>

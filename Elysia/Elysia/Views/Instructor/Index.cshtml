@@ -1,46 +1,62 @@
 ﻿@{
-    ViewData["Title"] = "Dashboard Giảng viên";
+    ViewData["Title"] = "Thống kê Giảng viên";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4">Chào mừng, Giảng viên!</h2>
-    <p class="text-muted">Tổng quan về hoạt động giảng dạy của bạn trên Elysia.</p>
+<div class="container py-5">
+    <h1 class="display-5 fw-bold text-primary mb-4"><i class="fas fa-chart-line"></i> Tổng quan</h1>
 
-    <div class="row">
-
-        <div class="col-md-4 mb-3">
-            <div class="card bg-info text-white shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Tổng Khóa Học Đã Tạo</h5>
-                    <p class="card-text display-4 fw-bold">@(ViewBag.TotalCourses ?? 0)</p>
-                    <a asp-action="MyCourses" class="text-white small">Xem tất cả khóa học &rarr;</a>
+    <div class="row g-4">
+        <!-- Card Total Courses -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 bg-primary text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2 opacity-75">Tổng số khóa học</h6>
+                            <h2 class="display-4 fw-bold mb-0">@ViewBag.TotalCourses</h2>
+                        </div>
+                        <i class="fas fa-chalkboard-teacher fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 text-center">
+                    <a asp-action="MyCourses" class="text-primary fw-bold text-decoration-none stretched-link">Quản lý khóa học <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 mb-3">
-            <div class="card bg-success text-white shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Tổng Sinh Viên Đăng Ký</h5>
-                    @* Giả định bạn có ViewBag.TotalEnrollments *@
-                    <p class="card-text display-4 fw-bold">@(ViewBag.TotalEnrollments ?? 0)</p>
-                    <span class="small">Số lượt đăng ký trên tất cả khóa học.</span>
+        <!-- Placeholder for Students Count (Future Feature) -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100 bg-success text-white">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase mb-2 opacity-75">Học viên đang học</h6>
+                            <h2 class="display-4 fw-bold mb-0">--</h2>
+                        </div>
+                        <i class="fas fa-users fa-3x opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 text-center">
+                    <span class="text-success fw-bold small">Chức năng đang phát triển</span>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4 mb-3">
-            <div class="card bg-warning text-dark shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Khóa Học Chờ Duyệt</h5>
-                    @* Giả định bạn có ViewBag.PendingCourses *@
-                    <p class="card-text display-4 fw-bold">@(ViewBag.PendingCourses ?? 0)</p>
-                    <span class="small">Khóa học đang chờ Admin xét duyệt.</span>
+        <!-- Quick Actions -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3 text-dark">Thao tác nhanh</h5>
+                    <div class="d-grid gap-2">
+                        <a asp-action="Create" class="btn btn-outline-primary text-start">
+                            <i class="fas fa-plus-circle me-2"></i> Tạo khóa học mới
+                        </a>
+                        <a asp-action="MyCourses" class="btn btn-outline-secondary text-start">
+                            <i class="fas fa-list me-2"></i> Xem danh sách bài giảng
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <h3 class="mt-5">Tạo khóa học mới</h3>
-    <a asp-action="Create" class="btn btn-primary btn-lg"><i class="fas fa-plus-circle"></i> Tạo Khóa Học Mới Ngay</a>
 </div>

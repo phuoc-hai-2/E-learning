@@ -1,64 +1,56 @@
 ﻿@model Elysia.Models.Course
-
 @{
-    ViewData["Title"] = "Tạo Khóa Học Mới";
+    ViewData["Title"] = "Tạo khóa học mới";
 }
 
-<div class="row pt-4 justify-content-center">
-    <div class="col-lg-10">
-        <h1 class="display-5 fw-bold mb-4"><i class="bi bi-file-earmark-plus text-success"></i> @ViewData["Title"]</h1>
-        <p class="lead text-muted">Nhập các thông tin cơ bản để bắt đầu khóa học mới của bạn.</p>
-
-        <hr class="mb-5" />
-
-        <div class="card shadow-lg p-4">
-            <form asp-action="Create" enctype="multipart/form-data">
-                <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
-
-                <div class="row">
-                    @* Cột 1: Thông tin cơ bản *@
-                    <div class="col-md-7">
-                        <div class="mb-3">
-                            <label asp-for="Title" class="form-label fw-bold">Tiêu đề Khóa học</label>
-                            <input asp-for="Title" class="form-control form-control-lg" placeholder="Ví dụ: Lập trình ASP.NET Core cơ bản" />
-                            <span asp-validation-for="Title" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Description" class="form-label fw-bold">Mô tả Khóa học</label>
-                            <textarea asp-for="Description" class="form-control" rows="5" placeholder="Mô tả chi tiết nội dung khóa học, đối tượng học viên,..."></textarea>
-                            <span asp-validation-for="Description" class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Price" class="form-label fw-bold">Giá Khóa học (VNĐ)</label>
-                            <input asp-for="Price" class="form-control" type="number" min="0" step="1000" placeholder="0" />
-                            <span asp-validation-for="Price" class="text-danger small"></span>
-                        </div>
-                    </div>
-
-                    @* Cột 2: Ảnh và Nút hành động *@
-                    <div class="col-md-5">
-                        <div class="card bg-light p-3 mb-4">
-                            <h6 class="card-title fw-bold mb-3">tai lieu</h6>
-                            @* FileUpload (Cần tạo ViewBag.ImageFile trong Controller) *@
-                            <input type="file" name="ImageFile" id="ImageFile" class="form-control" accept="image/*" required />
-                            <small class="text-muted mt-2">Kích thước đề nghị: 1200x675 pixels.</small>
-                        </div>
-
-                        <hr />
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-save"></i> Lưu & Tiếp tục Thêm bài giảng
-                            </button>
-                            <a asp-action="Index" class="btn btn-outline-secondary">
-                                <i class="bi bi-x-circle"></i> Hủy bỏ
-                            </a>
-                        </div>
-                    </div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0"><i class="fas fa-plus-circle me-2"></i> Tạo khóa học mới</h4>
                 </div>
-            </form>
+                <div class="card-body p-4">
+                    <form asp-action="Create" enctype="multipart/form-data" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold">Tên khóa học <span class="text-danger">*</span></label>
+                            <input asp-for="Title" class="form-control form-control-lg" placeholder="Ví dụ: Lập trình C# căn bản" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">Mô tả ngắn</label>
+                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Giới thiệu sơ lược về nội dung khóa học..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Price" class="form-label fw-bold">Giá bán (VNĐ)</label>
+                                <div class="input-group">
+                                    <input asp-for="Price" class="form-control" type="number" min="0" step="1000" />
+                                    <span class="input-group-text">VNĐ</span>
+                                </div>
+                                <small class="text-muted">Nhập 0 nếu là khóa học miễn phí.</small>
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Ảnh bìa khóa học</label>
+                                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                            <a asp-action="MyCourses" class="btn btn-light text-muted border">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold shadow-sm">
+                                <i class="fas fa-save me-2"></i> Tạo ngay
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -67,4 +59,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
 }
