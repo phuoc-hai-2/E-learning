@@ -1,54 +1,74 @@
 ﻿@model IEnumerable<Elysia.Models.Payment>
+
 @{
-    ViewData["Title"] = "Lịch sử thanh toán";
+    ViewData["Title"] = "Lịch sử giao dịch";
 }
 
-<div class="container mt-5">
-    <h2 class="mb-4 fw-bold text-dark"><i class="fas fa-receipt text-primary me-2"></i> Lịch sử giao dịch</h2>
+<div class="container py-5">
+    <h2 class="mb-4 fw-bold text-primary"><i class="fas fa-history me-2"></i>Lịch sử giao dịch</h2>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-light text-center shadow-sm py-5 border">
-            <i class="fas fa-file-invoice-dollar fa-3x text-muted mb-3 opacity-25"></i>
-            <p class="lead text-muted">Bạn chưa thực hiện giao dịch nào.</p>
-        </div>
+        <div class="alert alert-info">Bạn chưa có giao dịch nào.</div>
     }
     else
     {
-        <div class="card border-0 shadow-sm">
-            <div class="table-responsive">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
                 <table class="table table-hover mb-0 align-middle">
-                    <thead class="bg-light text-uppercase small fw-bold text-muted">
+                    <thead class="bg-light">
                         <tr>
-                            <th class="ps-4 py-3">Mã GD</th>
+                            <th class="py-3 ps-4">Mã GD</th>
                             <th>Khóa học</th>
                             <th>Số tiền</th>
                             <th>Ngày thanh toán</th>
-                            <th>Phương thức</th>
-                            <th class="text-end pe-4">Trạng thái</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td class="ps-4 text-muted small font-monospace">#@item.PaymentID</td>
-                                <td class="fw-bold text-dark">@(item.Enrollment?.Course?.Title ?? "Không xác định")</td>
-                                <td class="text-danger fw-bold">@item.Amount.ToString("N0") đ</td>
-                                <td class="text-muted small">@item.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td><span class="badge bg-light text-dark border">@item.PaymentMethod</span></td>
-                                <td class="text-end pe-4">
-                                    @if (item.Status == "Completed")
+                                <td class="ps-4 text-muted small">#@item.PaymentID</td>
+                                <td class="fw-bold text-dark">@item.Enrollment.Course.Title</td>
+                                <td class="text-danger fw-bold">@item.Amount.ToString("#,##0") đ</td>
+                                <td>@item.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @* 👇 SỬA LỖI Ở ĐÂY: Kiểm tra cả "Success" và "00" *@
+                                    @if (item.Status == "Success" || item.Status == "00" || item.Status == "Completed")
                                     {
-                                        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">Thành công</span>
+                                        <span class="badge bg-success rounded-pill px-3 py-2">
+                                            <i class="bi bi-check-circle me-1"></i> Thành công
+                                        </span>
                                     }
                                     else if (item.Status == "Pending")
                                     {
-                                        <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill">Đang chờ</span>
+                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
+                                            <i class="bi bi-hourglass-split me-1"></i> Đang chờ
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill">Thất bại</span>
+                                        <span class="badge bg-danger rounded-pill px-3 py-2">
+                                            <i class="bi bi-x-circle me-1"></i> Thất bại
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @* Chỉ hiện nút "Thanh toán lại" nếu chưa thành công *@
+                                    @if (item.Status != "Success" && item.Status != "00" && item.Status != "Completed")
+                                    {
+                                        <a asp-controller="Payment" asp-action="CreatePayment" asp-route-paymentId="@item.PaymentID"
+                                           class="btn btn-sm btn-outline-primary fw-bold">
+                                            <i class="bi bi-credit-card me-1"></i> Trả tiền ngay
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="/Courses/Watch?id=@item.Enrollment.CourseID" class="btn btn-sm btn-success fw-bold">
+                                            <i class="bi bi-play-fill"></i> Vào học
+                                        </a>
                                     }
                                 </td>
                             </tr>

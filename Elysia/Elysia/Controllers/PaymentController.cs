@@ -1,6 +1,6 @@
 ﻿using Elysia.Data;
 using Elysia.Models;
-using Elysia.Services.VnPay;
+using Elysia.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -17,7 +17,7 @@ namespace Elysia.Controllers
         private readonly IConfiguration _configuration;
         private readonly IEmailSender _emailSender;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<PaymentController> _logger; // Added Logger
+        private readonly ILogger<PaymentController> _logger;
 
         public PaymentController(
             ApplicationDbContext context,
@@ -42,15 +42,14 @@ namespace Elysia.Controllers
 
             if (payment == null) return NotFound();
 
-            // Check if payment is already completed to prevent double payment
-            if (payment.Status == "Completed")
+            // Nếu đã thanh toán rồi thì không cho thanh toán lại
+            if (payment.Status == "Success" || payment.Status == "Completed")
             {
                 return RedirectToAction("PaymentCallback", new { vnp_ResponseCode = "00", vnp_TxnRef = payment.PaymentID.ToString() });
             }
 
             var vnPay = new VnPayLibrary();
             var timeNow = DateTime.Now;
-            var tick = DateTime.Now.Ticks.ToString();
 
             // Get Config
             string vnp_TmnCode = _configuration["VnPay:TmnCode"];
@@ -59,25 +58,20 @@ namespace Elysia.Controllers
             string vnp_Returnurl = Url.Action("PaymentCallback", "Payment", null, Request.Scheme);
 
             // Build VNPAY Request
-            vnPay.AddRequestData("vnp_Version", VnPayLibrary.VERSION); // Assuming VERSION const exists or use "2.1.0"
+            vnPay.AddRequestData("vnp_Version", VnPayLibrary.VERSION);
             vnPay.AddRequestData("vnp_Command", "pay");
             vnPay.AddRequestData("vnp_TmnCode", vnp_TmnCode);
-            vnPay.AddRequestData("vnp_Amount", ((long)(payment.Amount * 100)).ToString()); // Use long to avoid overflow
+            vnPay.AddRequestData("vnp_Amount", ((long)(payment.Amount * 100)).ToString());
             vnPay.AddRequestData("vnp_CreateDate", timeNow.ToString("yyyyMMddHHmmss"));
             vnPay.AddRequestData("vnp_CurrCode", "VND");
-            vnPay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress(HttpContext) ?? "127.0.0.1"); // Use helper or fallback
+            vnPay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress(HttpContext) ?? "127.0.0.1");
             vnPay.AddRequestData("vnp_Locale", "vn");
-
-            // Order Info - Ensure no illegal characters if necessary
             vnPay.AddRequestData("vnp_OrderInfo", $"Thanh toan khoa hoc {payment.Enrollment.Course.Title}");
-            vnPay.AddRequestData("vnp_OrderType", "other"); // electronic device/other
-
+            vnPay.AddRequestData("vnp_OrderType", "other");
             vnPay.AddRequestData("vnp_ReturnUrl", vnp_Returnurl);
-            vnPay.AddRequestData("vnp_TxnRef", payment.PaymentID.ToString()); // Transaction Reference (Unique per day ideally)
+            vnPay.AddRequestData("vnp_TxnRef", payment.PaymentID.ToString());
 
-            // Create Payment URL with Signature
             string paymentUrl = vnPay.CreateRequestUrl(vnp_Url, vnp_HashSecret);
-
             _logger.LogInformation($"VNPAY URL Generated: {paymentUrl}");
 
             return Redirect(paymentUrl);
@@ -88,15 +82,11 @@ namespace Elysia.Controllers
         public async Task<IActionResult> PaymentCallback()
         {
             var response = Request.Query;
-            if (response.Count == 0)
-            {
-                return Content("No data received from VNPAY.");
-            }
+            if (response.Count == 0) return Content("No data received from VNPAY.");
 
             var vnPay = new VnPayLibrary();
             foreach (var s in response)
             {
-                // Populate response data into library for signature validation
                 if (!string.IsNullOrEmpty(s.Key) && s.Key.StartsWith("vnp_"))
                 {
                     vnPay.AddResponseData(s.Key, s.Value);
@@ -111,93 +101,91 @@ namespace Elysia.Controllers
             if (!checkSignature)
             {
                 _logger.LogWarning("Invalid Signature from VNPAY response.");
-                return View("PaymentFail", new { Message = "Chữ ký không hợp lệ. Giao dịch có thể đã bị can thiệp." });
+                return View("PaymentFail", new { Message = "Chữ ký không hợp lệ." });
             }
 
             // 2. Get Data
             string vnp_ResponseCode = vnPay.GetResponseData("vnp_ResponseCode");
             string vnp_TxnRef = vnPay.GetResponseData("vnp_TxnRef");
             string vnp_TransactionNo = vnPay.GetResponseData("vnp_TransactionNo");
-            string vnp_OrderInfo = vnPay.GetResponseData("vnp_OrderInfo");
 
             // 3. Find Payment in DB
-            if (!int.TryParse(vnp_TxnRef, out int paymentId))
-            {
-                _logger.LogError($"Invalid vnp_TxnRef: {vnp_TxnRef}");
-                return View("PaymentFail", new { Message = "Mã giao dịch không hợp lệ." });
-            }
+            if (!int.TryParse(vnp_TxnRef, out int paymentId)) return View("PaymentFail");
 
             var payment = await _context.Payments
                 .Include(p => p.Enrollment).ThenInclude(e => e.Course)
                 .FirstOrDefaultAsync(p => p.PaymentID == paymentId);
 
-            if (payment == null)
-            {
-                _logger.LogError($"Payment not found for ID: {paymentId}");
-                return NotFound();
-            }
+            if (payment == null) return NotFound();
 
-            // 4. Check Payment Status
-            // Only update if status is not already 'Completed' to avoid re-processing
-            if (payment.Status != "Completed")
+            // 4. Update Status (Chỉ cập nhật nếu chưa Success)
+            if (payment.Status != "Success")
             {
                 if (vnp_ResponseCode == "00") // 00 = Success
                 {
-                    payment.Status = "Completed";
+                    // QUAN TRỌNG: Đổi trạng thái thành "Success" để khớp với logic CoursesController
+                    payment.Status = "Success";
                     payment.PaymentMethod = "VnPay";
                     payment.TransactionId = vnp_TransactionNo;
 
-                    // Unlock logic: If you had logic to hide content until paid, it's handled here by status
-
-                    // Update Context
                     _context.Payments.Update(payment);
                     await _context.SaveChangesAsync();
 
                     // Send Notifications
                     var user = await _userManager.FindByIdAsync(payment.Enrollment.UserId);
+
+                    // 🔔 Báo cho Sinh viên + Giảng viên
                     await SendPaymentSuccessNotifications(user, payment.Enrollment.Course);
 
                     _logger.LogInformation($"Payment {paymentId} success. Transaction: {vnp_TransactionNo}");
                 }
                 else
                 {
-                    // Payment Failed or Cancelled
                     payment.Status = "Failed";
                     _context.Payments.Update(payment);
                     await _context.SaveChangesAsync();
-
                     _logger.LogWarning($"Payment {paymentId} failed. Code: {vnp_ResponseCode}");
                 }
             }
 
-            // Return View (Confirmation)
             return View("Confirmation", payment);
         }
 
-        private async Task SendPaymentSuccessNotifications(ApplicationUser user, Course course)
+        // Helper: Gửi thông báo khi thanh toán thành công
+        private async Task SendPaymentSuccessNotifications(ApplicationUser student, Course course)
         {
-            // 1. Web Notification
-            var noti = new Notification
+            // 1. Web Notification -> Sinh viên
+            _context.Notifications.Add(new Notification
             {
-                UserId = user.Id,
+                UserId = student.Id,
                 Message = $"Thanh toán thành công khóa học: {course.Title}",
                 Url = $"/Courses/Watch?id={course.CourseID}",
                 CreatedAt = DateTime.Now,
                 IsRead = false
-            };
-            _context.Notifications.Add(noti);
+            });
+
+            // === 🔔 2. Web Notification -> Giảng viên (Ting ting!) ===
+            _context.Notifications.Add(new Notification
+            {
+                UserId = course.UserId, // ID Giảng viên
+                Message = $"Ting ting! Sinh viên {student.FullName ?? student.UserName} vừa mua khóa học '{course.Title}'.",
+                Url = "/Instructor/Index", // Link tới Dashboard doanh thu
+                CreatedAt = DateTime.Now,
+                IsRead = false
+            });
+            // ========================================================
+
             await _context.SaveChangesAsync();
 
-            // 2. Email Notification
-            if (!string.IsNullOrEmpty(user.Email))
+            // 3. Email Notification -> Sinh viên
+            if (!string.IsNullOrEmpty(student.Email))
             {
                 try
                 {
-                    await _emailSender.SendEmailAsync(user.Email, "Thanh toán thành công - Elysia",
+                    await _emailSender.SendEmailAsync(student.Email, "Thanh toán thành công - Elysia",
                         $@"
-                        <h3>Cảm ơn {user.FullName},</h3>
+                        <h3>Cảm ơn {student.FullName},</h3>
                         <p>Bạn đã thanh toán thành công khóa học <strong>{course.Title}</strong>.</p>
-                        <p>Mã khóa học: {course.CourseID}</p>
                         <p>Chúc bạn học tập tốt!</p>
                         <p><a href='https://elysia-elearning.com/Courses/Watch?id={course.CourseID}'>Bắt đầu học ngay</a></p>
                         ");
@@ -221,7 +209,6 @@ namespace Elysia.Controllers
         }
     }
 
-    // Helper class to get IP Address (Optional, can put in Utils folder)
     public static class Utils
     {
         public static string GetIpAddress(HttpContext context)
@@ -237,9 +224,7 @@ namespace Elysia.Controllers
                         remoteIpAddress = System.Net.Dns.GetHostEntry(remoteIpAddress).AddressList
                             .FirstOrDefault(x => x.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
                     }
-
                     if (remoteIpAddress != null) ipAddress = remoteIpAddress.ToString();
-
                     return ipAddress;
                 }
             }
@@ -247,7 +232,6 @@ namespace Elysia.Controllers
             {
                 return "Invalid IP:" + ex.Message;
             }
-
             return "127.0.0.1";
         }
     }

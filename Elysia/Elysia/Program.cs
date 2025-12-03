@@ -4,10 +4,32 @@ using Elysia.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.Features; // Thêm thư viện này để cấu hình Form upload
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ==================================================================
+// 0. Cấu hình giới hạn Upload (Quan trọng cho web E-learning)
+// ==================================================================
+
+// Cấu hình cho Kestrel server (chạy khi debug hoặc chạy độc lập)
+builder.WebHost.ConfigureKestrel(options =>
+{
+    // Giới hạn khoảng 3GB (khớp với web.config)
+    options.Limits.MaxRequestBodySize = 3221225472;
+});
+
+// Cấu hình cho Form upload (Multipart body)
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartBodyLengthLimit = 3221225472; // 3GB
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+});
+
+// ==================================================================
 // 1. Cấu hình Database (SQL Server)
+// ==================================================================
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -15,9 +37,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 // 2. Cấu hình Identity (Xác thực & Phân quyền)
-// Sử dụng AddIdentity để tùy chỉnh Role và User
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
-    // Cấu hình đăng nhập: Yêu cầu xác nhận email (quan trọng cho logic duyệt Giảng viên)
+    // Cấu hình đăng nhập: Yêu cầu xác nhận email
     options.SignIn.RequireConfirmedAccount = true;
 
     // Cấu hình mật khẩu (đơn giản hóa cho đồ án)
@@ -54,17 +75,16 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// 6. Kích hoạt Xác thực và Phân quyền (Thứ tự này là BẮT BUỘC)
+// 6. Kích hoạt Xác thực và Phân quyền
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 7. Seed Data (Tạo Admin và Roles mặc định khi chạy lần đầu)
+// 7. Seed Data
 try
 {
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
-        // Gọi hàm SeedRolesAndAdminAsync
         Elysia.Models.DbSeeder.SeedRolesAndAdminAsync(services).Wait();
     }
 }
@@ -74,7 +94,7 @@ catch (Exception ex)
     logger.LogError(ex, "Một lỗi đã xảy ra khi khởi tạo dữ liệu mẫu (Seeding DB).");
 }
 
-// 8. Định tuyến (Routing)
+// 8. Định tuyến
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

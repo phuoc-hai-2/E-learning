@@ -3,7 +3,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.Globalization;
 
-namespace Elysia.Services.VnPay
+namespace Elysia.Services
 {
     public class VnPayLibrary
     {

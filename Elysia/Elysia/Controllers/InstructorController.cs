@@ -154,39 +154,35 @@ namespace Elysia.Controllers
                 _context.Lectures.Add(lecture);
                 await _context.SaveChangesAsync();
 
-                // === GỬI THÔNG BÁO ===
-                var course = await _context.Courses.FindAsync(lecture.CourseID);
-                var enrolledUsers = await _context.Enrollments
+                // === 🔔 GỬI THÔNG BÁO: Giảng viên thêm bài mới -> Báo Sinh viên ===
+                var enrolledStudentIds = await _context.Enrollments
                     .Where(e => e.CourseID == lecture.CourseID)
-                    .Include(e => e.User)
+                    .Select(e => e.UserId)
                     .ToListAsync();
 
-                if (enrolledUsers.Any())
+                if (enrolledStudentIds.Any())
                 {
+                    var courseTitle = await _context.Courses
+                        .Where(c => c.CourseID == lecture.CourseID)
+                        .Select(c => c.Title)
+                        .FirstOrDefaultAsync();
+
                     var notifications = new List<Notification>();
-                    foreach (var enroll in enrolledUsers)
+                    foreach (var studentId in enrolledStudentIds)
                     {
-                        // 1. Thông báo Web
                         notifications.Add(new Notification
                         {
-                            UserId = enroll.UserId,
-                            Message = $"Bài giảng mới '{lecture.Title}' đã được thêm vào khóa học '{course?.Title}'.",
+                            UserId = studentId,
+                            Message = $"Bài giảng mới: '{lecture.Title}' vừa được thêm vào khóa học '{courseTitle}'.",
                             Url = $"/Courses/Watch?id={lecture.CourseID}",
                             IsRead = false,
                             CreatedAt = DateTime.Now
                         });
-
-                        // 2. Gửi Email
-                        if (!string.IsNullOrEmpty(enroll.User.Email))
-                        {
-                            await _emailSender.SendEmailAsync(enroll.User.Email, "Bài học mới từ Giảng viên",
-                                $"<h3>Xin chào {enroll.User.FullName},</h3><p>Khóa học <strong>{course?.Title}</strong> vừa có bài giảng mới: <strong>{lecture.Title}</strong>.</p><p><a href='https://elysia-elearning.com/Courses/Watch?id={lecture.CourseID}'>Vào học ngay</a></p>");
-                        }
                     }
                     _context.Notifications.AddRange(notifications);
                     await _context.SaveChangesAsync();
                 }
-                // =====================
+                // =================================================================
 
                 return RedirectToAction(nameof(ManageCourse), new { id = lecture.CourseID });
             }
@@ -324,6 +320,7 @@ namespace Elysia.Controllers
 
             if (lecture.Quiz == null)
             {
+                // Tạo mới Quiz
                 lecture.Quiz = new Quiz
                 {
                     LectureID = lectureId,
@@ -332,6 +329,30 @@ namespace Elysia.Controllers
                 };
                 _context.Quizzes.Add(lecture.Quiz);
                 await _context.SaveChangesAsync();
+
+                // === 🔔 GỬI THÔNG BÁO: Giảng viên tạo Quiz -> Báo Sinh viên ===
+                var enrolledStudentIds = await _context.Enrollments
+                    .Where(e => e.CourseID == lecture.CourseID)
+                    .Select(e => e.UserId)
+                    .ToListAsync();
+
+                if (enrolledStudentIds.Any())
+                {
+                    var notifications = new List<Notification>();
+                    foreach (var studentId in enrolledStudentIds)
+                    {
+                        notifications.Add(new Notification
+                        {
+                            UserId = studentId,
+                            Message = $"Bài tập mới vừa được thêm vào bài giảng '{lecture.Title}'.",
+                            Url = $"/Courses/DoQuiz?lectureId={lectureId}",
+                            CreatedAt = DateTime.Now
+                        });
+                    }
+                    _context.Notifications.AddRange(notifications);
+                    await _context.SaveChangesAsync();
+                }
+                // =============================================================
             }
             return View(lecture.Quiz);
         }

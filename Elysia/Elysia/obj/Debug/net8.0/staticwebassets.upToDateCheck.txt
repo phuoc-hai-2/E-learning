@@ -58,10 +58,16 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\uploads\courses\359b8fdc-65ca-4c5e-8819-84cc671da25f.jpg
 wwwroot\uploads\courses\43f38237-90d0-4b9f-bf48-a57e66da5055.png
+wwwroot\uploads\courses\630c2b3f-b435-42c7-b5d3-1cce5f2f8837.jpg
 wwwroot\uploads\courses\894388ce-d6d4-4aab-9135-a5226f89846e.jpg
 wwwroot\uploads\courses\a15f4201-e2bc-4921-b426-01fb123b1a6e.png
 wwwroot\uploads\courses\eae10580-adab-406f-9568-eb7a7d6fb2e3.jpg
+wwwroot\uploads\courses\ef9bbb88-63e4-4527-b9a6-66331ea1947f.jpg
+wwwroot\uploads\courses\fef07347-e474-4f7f-b640-13c5dafe2c46.jpg
 wwwroot\uploads\videos\4b77932f-0b4d-4ecd-8680-fcdbb050b28f.mp4
+wwwroot\uploads\videos\b338b22d-1e97-482a-9ac1-66ddfba81f08.mp4
+wwwroot\uploads\videos\b44e43fd-d65c-48bd-8272-b370a8560d06.mp4
 wwwroot\uploads\videos\bc46d36b-f88a-4d8f-a1e8-5b7efb2800f9.mp4
 wwwroot\uploads\videos\df7336b4-c4e6-4581-b1bf-951e6aa96c62.png

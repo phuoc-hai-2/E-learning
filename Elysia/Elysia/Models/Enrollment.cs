@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-// Namespace: Elysia.Models
 namespace Elysia.Models
 {
     public class Enrollment
@@ -24,5 +23,6 @@ namespace Elysia.Models
         public int CourseID { get; set; }
         [ForeignKey("CourseID")]
         public virtual Course Course { get; set; }
+        public virtual ICollection<Payment> Payments { get; set; }
     }
 }
