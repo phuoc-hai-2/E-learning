@@ -1,25 +1,25 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Elysia.Models
-
-@* Tải dịch vụ SignInManager và UserManager để kiểm tra đăng nhập và lấy thông tin user *@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+
+@{
+    // Lấy thông tin user hiện tại để hiển thị Avatar
+    var user = await UserManager.GetUserAsync(User);
+    var avatarUrl = user?.AvatarUrl ?? "/images/default-avatar.png";
+    var displayName = user?.FullName ?? user?.UserName ?? "User";
+}
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        @* Lấy thông tin user hiện tại *@
-        var user = await UserManager.GetUserAsync(User);
-        var userName = user?.FullName ?? user?.UserName; // Ưu tiên hiển thị FullName nếu có
-
-        @* Nếu đã đăng nhập: Hiển thị tên và nút Đăng xuất *@
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-                Chào, @userName!
+            <a class="nav-link text-dark d-flex align-items-center" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                <img src="@avatarUrl" class="rounded-circle me-2 border" style="width: 30px; height: 30px; object-fit: cover;" onerror="this.src='/images/default-avatar.png'" />
+                <span class="fw-bold">Hi, @displayName!</span>
             </a>
         </li>
         <li class="nav-item">
-            @* Nút đăng xuất BẮT BUỘC phải là một Form (để bảo mật) *@
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                 <button type="submit" class="nav-link btn btn-link text-dark">Đăng xuất</button>
             </form>
@@ -27,7 +27,7 @@
     }
     else
     {
-        @* Nếu chưa đăng nhập: Hiển thị Đăng ký và Đăng nhập *@
+        // ... Code cho người chưa đăng nhập (giữ nguyên)
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Đăng ký</a>
         </li>

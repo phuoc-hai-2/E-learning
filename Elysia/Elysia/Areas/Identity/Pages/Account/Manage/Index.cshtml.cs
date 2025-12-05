@@ -17,48 +17,39 @@ namespace Elysia.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IWebHostEnvironment _webHostEnvironment; // Thêm môi trường để lưu file
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public string Username { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Số điện thoại")]
             public string PhoneNumber { get; set; }
+
+            [Display(Name = "Họ và tên")]
+            public string FullName { get; set; }
+
+            [Display(Name = "Ảnh đại diện")]
+            public IFormFile AvatarFile { get; set; } // Nhận file upload
+
+            public string CurrentAvatarUrl { get; set; } // Hiển thị ảnh hiện tại
         }
 
         private async Task LoadAsync(ApplicationUser user)
@@ -70,7 +61,9 @@ namespace Elysia.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                FullName = user.FullName,
+                CurrentAvatarUrl = user.AvatarUrl ?? "/images/default-avatar.png" // Ảnh mặc định nếu chưa có
             };
         }
 
@@ -100,19 +93,52 @@ namespace Elysia.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            // 1. Cập nhật Số điện thoại
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
                 if (!setPhoneResult.Succeeded)
                 {
-                    StatusMessage = "Unexpected error when trying to set phone number.";
+                    StatusMessage = "Lỗi bất ngờ khi cập nhật số điện thoại.";
                     return RedirectToPage();
                 }
             }
 
+            // 2. Cập nhật Họ tên (FullName)
+            if (Input.FullName != user.FullName)
+            {
+                user.FullName = Input.FullName;
+                await _userManager.UpdateAsync(user);
+            }
+
+            // 3. Xử lý Upload Ảnh đại diện (Avatar)
+            if (Input.AvatarFile != null && Input.AvatarFile.Length > 0)
+            {
+                // Tạo tên file duy nhất
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(Input.AvatarFile.FileName);
+
+                // Đường dẫn thư mục lưu: wwwroot/uploads/avatars
+                string uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "avatars");
+
+                // Tạo thư mục nếu chưa có
+                if (!Directory.Exists(uploadFolder)) Directory.CreateDirectory(uploadFolder);
+
+                string filePath = Path.Combine(uploadFolder, fileName);
+
+                // Lưu file
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await Input.AvatarFile.CopyToAsync(stream);
+                }
+
+                // Cập nhật đường dẫn vào DB
+                user.AvatarUrl = "/uploads/avatars/" + fileName;
+                await _userManager.UpdateAsync(user);
+            }
+
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "Hồ sơ của bạn đã được cập nhật thành công!";
             return RedirectToPage();
         }
     }
